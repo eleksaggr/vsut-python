@@ -1,13 +1,13 @@
 class TestCase:
 
-    def assertEqual(value, expected):
+    def assertEqual(self, value, expected):
         if value != expected:
-            raise CaseFailed("{0} != {1}")
+            raise CaseFailed("{0} != {1}".format(value, expected))
 
-    def assertTrue(value):
+    def assertTrue(self, value):
         assertEqual(value, True)
 
-    def assertFalse(value):
+    def assertFalse(self, value):
         assertEqual(value, False)
 
 class CaseFailed(Exception):
@@ -16,4 +16,4 @@ class CaseFailed(Exception):
         self.message = message
 
     def __str__(self):
-        return message
+        return self.message
