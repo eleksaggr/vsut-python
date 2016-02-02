@@ -1,9 +1,9 @@
-from vsut.unit import Case, Suite, test
+from vsut.unit import Case, Suite
 
 
 class TestCase(Case):
 
-    def run(self):
+    def testAll(self):
         self.assertEqual(1, 1)
         self.assertEqual(1, 2)
         self.assertNotEqual(1, 2)
@@ -27,18 +27,10 @@ class TestCase(Case):
         self.assertRaises(ZeroDivisionError, func, 1, 0)
         self.assertRaises(ZeroDivisionError, func, 1, 1)
         self.failUnless(1, 1)
-        self.failUnless(1, 0)
+    #    self.failUnless(1, 0)
 
-    @test
-    def testTestolino(self):
-        print("Test called.")
+    def testNumberTwo(self):
         self.assertEqual(1, 1)
-
-
-class SecondCase(Case):
-
-    def run(self):
-        self.assertEqual("abc", "abc")
 
 
 def func(a, b):
@@ -47,10 +39,6 @@ def func(a, b):
 if __name__ == "__main__":
     s = Suite("TestCase Suite")
     c = TestCase("TestCase")
-    c1 = SecondCase("SecondCase")
-
-    c.testTestolino()
 
     s.add(c)
-    s.add(c1)
     s.run(verbose=True)
