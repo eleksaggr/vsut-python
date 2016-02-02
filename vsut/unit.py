@@ -16,58 +16,78 @@ class Suite:
         if case is not None and isinstance(case, Case):
             self.cases.append(case)
 
-    def run(self, out=stdout, verbose=False):
-        id = 0
+    def run(self, out=stdout, verbose=True):
+        # Execute all cases.
         for case in self.cases:
             try:
-                # TODO: Run all methods of the case that start with 'test'.
-                print(case.tests)
-                for test in case.tests:
+                # Run all methods of the case that start with 'test'.
+                tests = [method for method in dir(case)
+                         if callable(getattr(case, method)) and method.startswith("test")]
+                for test in tests:
                     func = getattr(case, test, None)
+
+                    # Add the name of the test to the case, together with its
+                    # id.
+                    case.tests.append((case.id, test))
+
                     func()
+                    case.id = case.id + 1
             except FailError as e:
                 # If we hit a FailError, stop execution and skip to the next
                 # case.
                 pass
-            id = id + 1
 
+        # Print everything to the output.
         print("Suite: {0}".format(self.name), file=out)
         print("***************************************************************")
-        print("\t--------------------------------------------------")
         for case in self.cases:
-            success = True
-
-            print("\tCase: {0}".format(case.name), file=out)
-            for result in case.results:
-                # Convert enum status to string representation.
-                if result.status == Status.Ok:
-                    status = "OK"
-                elif result.status == Status.Fail:
-                    status = "FAIL"
-                    success = False
-                else:
-                    status = "ERROR"
-                    success = False
-                if verbose:
-                    # If there is a message, add parentheses to it.
-                    if result.message is not None and result.message is not "":
-                        result = Result(result.id, result.status,
-                                        "({0})".format(result.message))
-
-                    print("\t\t{0}:\t {2} {1}".format(
-                        result.id, result.message, status), file=out)
-                    print("\t----------------------------------------------------")
-            if not verbose:
-                print("\t\tSuccess: {0}".format(success))
-                print("\t----------------------------------------------------")
+            self.__printCase(case, verbose)
         print("***************************************************************")
 
+    def __printCase(self, case, verbose):
+        print("Case: {0}".format(case.name))
 
-def test(func):
-    def func_wrapper(self):
-        if func.__name__ not in self.tests:
-            self.tests.append(func.__name__)
-    return func_wrapper
+        for test in case.tests:
+            id = test[0]
+            name = test[1]
+
+            # Check if the test passed all its conditions.
+            statuses = [
+                result.status for result in case.results if result.id == id]
+            status = Status.Ok
+            for s in statuses:
+                if s != Status.Ok:
+                    status = s
+                    break
+
+            if verbose:
+                for result in case.results:
+                    if result.id == id:
+                        # Add parentheses to the message.
+                        message = ""
+                        if result.message is not None and result.message != "":
+                            message = "...({0})".format(result.message)
+
+                        # Convert status enum to string.
+                        if result.status == Status.Ok:
+                            status = "Ok"
+                        elif result.status == Status.Fail:
+                            status = "Fail"
+                        else:
+                            status = "Error"
+
+                        print("  [{0}]{1}:\t{2}{3}".format(
+                            id, name, status, message))
+            else:
+                if status == Status.Ok:
+                    print("  [{0}]{1}:\t{2}".format(
+                        id, name, "Ok"))
+                elif status == Status.Fail:
+                    print("  [{0}]{1}:\t{2}".format(
+                        id, name, "Fail"))
+                else:
+                    print("  [{0}]{1}:\t{2}".format(
+                        id, name, "Error"))
 
 
 class Case:
@@ -78,16 +98,12 @@ class Case:
         self.results = []
         self.tests = []
 
-    def run(self, method):
-        self.method()
-
     def assertEqual(self, value, expected):
         if value == expected:
             self.results.append(Result(self.id, Status.Ok, ""))
         else:
             self.results.append(Result(self.id, Status.Fail,
                                        "{0} is not {1}".format(value, expected)))
-        self.id = self.id + 1
 
     def assertNotEqual(self, value, expected):
         if value != expected:
@@ -95,7 +111,6 @@ class Case:
         else:
             self.results.append(Result(self.id, Status.Fail,
                                        "{0} is not {1}".format(value, expected)))
-        self.id = self.id + 1
 
     def assertTrue(self, value):
         self.assertEqual(value, True)
@@ -109,7 +124,6 @@ class Case:
         else:
             self.results.append(Result(self.id, Status.Fail,
                                        "{0} is not {1}".format(value, expected)))
-        self.id = self.id + 1
 
     def assertIsNot(self, value, expected):
         if value is not expected:
@@ -117,7 +131,6 @@ class Case:
         else:
             self.results.append(Result(self.id, Status.Fail,
                                        "{0} is {1}".format(value, expected)))
-        self.id = self.id + 1
 
     def assertIsNone(self, value):
         self.assertIs(value, None)
@@ -131,7 +144,6 @@ class Case:
         else:
             self.results.append(
                 Result(self.id, Status.Fail, "{0} is not in {1}".format(value, collection)))
-        self.id = self.id + 1
 
     def assertNotIn(self, value, collection):
         if value not in collection:
@@ -139,16 +151,14 @@ class Case:
         else:
             self.results.append(
                 Result(self.id, Status.Fail, "{0} is in {1}".format(value, collection)))
-        self.id = self.id + 1
 
     def assertRaises(self, exception, func, *args, **kwargs):
         try:
             func(*args, **kwargs)
             self.results.append(Result(
-                self.id, Status.Fail, "{0} did not throw {1}".format(func.__name__, exception)))
+                self.id, Status.Fail, "{0} did not throw {1}".format(func.__name__, exception.__name__)))
         except exception as e:
             self.results.append(Result(self.id, Status.Ok, ""))
-        self.id = self.id + 1
 
     def failUnless(self, value, expected):
         if value == expected:
@@ -157,7 +167,6 @@ class Case:
             self.results.append(
                 Result(self.id, Status.Error, "{0} is not {1} | Execution stopped.".format(value, expected)))
             raise FailError("")
-        self.id = self.id + 1
 
 
 class FailError(Exception):
