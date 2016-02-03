@@ -77,17 +77,17 @@ class Suite:
                             status = "Error"
 
                         print("  [{0}]{1}:\t{2}{3}".format(
-                            id, name, status, message))
+                            id, name, status, message), file=out)
             else:
                 if status == Status.Ok:
                     print("  [{0}]{1}:\t{2}".format(
-                        id, name, "Ok"))
+                        id, name, "Ok"), file=out)
                 elif status == Status.Fail:
                     print("  [{0}]{1}:\t{2}".format(
-                        id, name, "Fail"))
+                        id, name, "Fail"), file=out)
                 else:
                     print("  [{0}]{1}:\t{2}".format(
-                        id, name, "Error"))
+                        id, name, "Error"), file=out)
 
 
 class Case:
