@@ -7,16 +7,38 @@ Status = Enum('Status', 'Ok, Fail, Error')
 
 
 class Suite:
+    """A Suite is a group of cases, that are executed sequentially.
+
+        Attributes:
+            name (str): The name of the suite.
+            cases ([Case]): The cases that belong to this suite.
+    """
 
     def __init__(self, name):
+        """Creates an empty Suite with the given name.
+
+            Args:
+                name (str): The name of the suite.
+        """
         self.name = name
         self.cases = []
 
     def add(self, case):
+        """Adds a case to the suite.
+
+            Args:
+                case (Case): The case that will be added.
+        """
         if case is not None and isinstance(case, Case):
             self.cases.append(case)
 
     def run(self, out=stdout, verbose=True):
+        """Runs all cases the suite has sequentially and prints them to the output.
+
+            Args:
+                out (Optional(file)): The output the suite will print to, default is stdout.
+                verbose (Optional(boolean)): Whether the output should be verbose, defaults to True.
+        """
         # Execute all cases.
         for case in self.cases:
             try:
@@ -41,10 +63,17 @@ class Suite:
         print("Suite: {0}".format(self.name), file=out)
         print("***************************************************************")
         for case in self.cases:
-            self.__printCase(case, verbose)
+            self.__printCase(out, case, verbose)
         print("***************************************************************")
 
-    def __printCase(self, case, verbose):
+    def __printCase(self, out, case, verbose):
+        """Prints a case to the output.
+
+            Args:
+                out (file): The output the method prints to.
+                case (Case): The case that will be printed.
+                verbose (boolean): Whether the output should be verbose.
+        """
         print("Case: {0}".format(case.name))
 
         for test in case.tests:
@@ -91,14 +120,33 @@ class Suite:
 
 
 class Case:
+    """A case has multiple tests, that are executed when the suite it belongs to, is run.
+
+        Attributes:
+            id (int): A incrementing id, that increases for every test.
+            name (str): The name of the test-case.
+            results ([Result]): Results for every assertion in this case.
+            tests ([(int, str)]): A list of tuples containing the id of a test and its name.
+    """
 
     def __init__(self, name):
+        """Creates a case with the given name.
+
+            Args:
+                name (str): The name of the case.
+        """
         self.name = name
         self.id = 0
         self.results = []
         self.tests = []
 
     def assertEqual(self, value, expected):
+        """Checks whether value is equal to expected.
+
+            Args:
+                value (object): The value to be tested.
+                expected (object): The value to be compared to.
+        """
         if value == expected:
             self.results.append(Result(self.id, Status.Ok, ""))
         else:
@@ -106,6 +154,12 @@ class Case:
                                        "{0} is not {1}".format(value, expected)))
 
     def assertNotEqual(self, value, expected):
+        """Checks whether value is not equal to expected.
+
+            Args:
+                value (object): The value to be checked.
+                expected (object): The value to be compared to.
+        """
         if value != expected:
             self.results.append(Result(self.id, Status.Ok, ""))
         else:
@@ -113,12 +167,28 @@ class Case:
                                        "{0} is not {1}".format(value, expected)))
 
     def assertTrue(self, value):
+        """Checks whether value is to boolean value True.
+
+            Args:
+                value (boolean): The value to be checked.
+        """
         self.assertEqual(value, True)
 
     def assertFalse(self, value):
+        """Checks whether value is the boolean value False.
+
+            Args:
+                value (boolean): The value to be checked.
+        """
         self.assertEqual(value, False)
 
     def assertIs(self, value, expected):
+        """Check whether value is expected.
+
+            Args:
+                value (object): The value to be checked.
+                expected (object): The value to be compared to.
+        """
         if value is expected:
             self.results.append(Result(self.id, Status.Ok, ""))
         else:
@@ -126,6 +196,12 @@ class Case:
                                        "{0} is not {1}".format(value, expected)))
 
     def assertIsNot(self, value, expected):
+        """Check whether the value is not expected.
+
+            Args:
+                value (object): The value to be checked.
+                expected (object): The value to be compared to.
+        """
         if value is not expected:
             self.results.append(Result(self.id, Status.Ok, ""))
         else:
@@ -133,12 +209,28 @@ class Case:
                                        "{0} is {1}".format(value, expected)))
 
     def assertIsNone(self, value):
+        """Checks whether value is None.
+
+            Args:
+                value (object): The value to be checked.
+        """
         self.assertIs(value, None)
 
     def assertIsNotNone(self, value):
+        """Checks whether the value is not None.
+
+            Args:
+                value (object): The value to be checked.
+        """
         self.assertIsNot(value, None)
 
     def assertIn(self, value, collection):
+        """Checks whether value is in the collection.
+
+            Args:
+                value (object): The value to be checked.
+                collection (object): The collection the object should be in.
+        """
         if value in collection:
             self.results.append(Result(self.id, Status.Ok, ""))
         else:
@@ -146,6 +238,12 @@ class Case:
                 Result(self.id, Status.Fail, "{0} is not in {1}".format(value, collection)))
 
     def assertNotIn(self, value, collection):
+        """Checks whether value is not in the collection.
+
+            Args:
+                value (object): The value to be checked.
+                collection (object): The collection the object should not be in.
+        """
         if value not in collection:
             self.results.append(Result(self.id, Status.Ok, ""))
         else:
@@ -153,6 +251,13 @@ class Case:
                 Result(self.id, Status.Fail, "{0} is in {1}".format(value, collection)))
 
     def assertRaises(self, exception, func, *args, **kwargs):
+        """Checks whether the function 'func' raises an expection of type 'exception'.
+
+            Args:
+                exception (class(Exception)): The type of the exception to watch out for.
+                func (function): The function to execute.
+                *args (args): The arguments for the function.
+        """
         try:
             func(*args, **kwargs)
             self.results.append(Result(
@@ -161,6 +266,12 @@ class Case:
             self.results.append(Result(self.id, Status.Ok, ""))
 
     def failUnless(self, value, expected):
+        """Fails the case, if value is not equal to expected.
+
+            Args:
+                value (object): The value to be checked.
+                expected (object): The value to be compared to.
+        """
         if value == expected:
             self.results.append(Result(self.id, Status.Ok, ""))
         else:
@@ -170,9 +281,21 @@ class Case:
 
 
 class FailError(Exception):
+    """An exception that shows a failure condition was met.
+
+        Attributes:
+            message (str): A user-defined message.
+    """
 
     def __init__(self, message):
+        """Creates an exception with a user-defined message.
+
+            Args:
+                message (str): The message.
+        """
         self.message = message
 
     def __str__(self):
+        """Returns the message.
+        """
         return self.message
