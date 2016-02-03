@@ -24,7 +24,7 @@ suite.run()
 ```
 The following options can be specified, when running a suite:
 * __verbose__ (Default: True): Will show the result for every condition of a test in the output.
-* __out__ (Default: stdout): A stream, the output will be printed to.
+* __out__ (Default: stdout): A stream the output will be printed to.
 
 ## Asserts & Fail Conditions
 The following methods can be used in a test-case to check for success or failure:
