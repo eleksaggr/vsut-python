@@ -39,6 +39,7 @@ The following methods can be used in a test-case to check for success or failure
 * ```assertIsNone(value)``` - Checks whether the argument is None.
 * ```assertIsNotNone(value)``` - Checks whether the argument is not None.
 * ```assertRaises(exception, func, *args, **kwargs)``` - Checks whether the function 'func' raises an exception of the type 'exception'.
+* ```failUnless(value, expected)``` - Fails the case, if value is not equal to expected.
 
 ## Full Example
 ```python
