@@ -52,7 +52,10 @@ class Suite:
                     # id.
                     case.tests.append((case.id, test))
 
+                    case.setup()
                     func()
+                    case.teardown()
+
                     case.id = case.id + 1
             except FailError as e:
                 # If we hit a FailError, stop execution and skip to the next
@@ -139,6 +142,16 @@ class Case:
         self.id = 0
         self.results = []
         self.tests = []
+
+    def setup(self):
+        """The setup method is executed before every single test.
+        """
+        pass
+
+    def teardown(self):
+        """The teardown method is executed after every single test.
+        """
+        pass
 
     def assertEqual(self, value, expected):
         """Checks whether value is equal to expected.
