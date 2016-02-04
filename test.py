@@ -3,6 +3,12 @@ from vsut.unit import Case, Suite
 
 class TestCase(Case):
 
+    def setup(self):
+        self.x = 1
+
+    def teardown(self):
+        self.x = 0
+
     def testAll(self):
         self.assertEqual(1, 1)
         self.assertEqual(1, 2)
@@ -27,11 +33,16 @@ class TestCase(Case):
         self.assertRaises(ZeroDivisionError, func, 1, 0)
         self.assertRaises(ZeroDivisionError, func, 1, 1)
         self.failUnless(1, 1)
-    #    self.failUnless(1, 0)
 
     def testNumberTwo(self):
         self.assertEqual(1, 1)
 
+    def testSetupAndTeardown(self):
+        self.assertEqual(self.x, 1)
+        self.x = 2
+
+    def testSetupAndTeardownTwo(self):
+        self.assertNotEqual(self.x, 2)
 
 def func(a, b):
     return a / b
