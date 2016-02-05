@@ -1,4 +1,4 @@
-from vsut.unit import Case, Suite
+from vsut.unit import Case
 
 
 class TestCase(Case):
@@ -32,7 +32,6 @@ class TestCase(Case):
         self.assertNotIn(1, [1, 2, 3])
         self.assertRaises(ZeroDivisionError, func, 1, 0)
         self.assertRaises(ZeroDivisionError, func, 1, 1)
-        self.failUnless(1, 1)
 
     def testNumberTwo(self):
         self.assertEqual(1, 1)
@@ -40,16 +39,19 @@ class TestCase(Case):
     def testSetupAndTeardown(self):
         self.assertEqual(self.x, 1)
         self.x = 2
+        self.y = 3
 
     def testSetupAndTeardownTwo(self):
         self.assertNotEqual(self.x, 2)
+        self.assertEqual(self.y, 3)
+
+    # def testAlignmentOnOutputThisMustBeLong(self):
+    #     self.assertEqual(1, 1)
+
 
 def func(a, b):
     return a / b
 
 if __name__ == "__main__":
-    s = Suite("TestCase Suite")
     c = TestCase("TestCase")
-
-    s.add(c)
-    s.run(verbose=True)
+    c.run()
