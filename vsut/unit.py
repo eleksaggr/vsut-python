@@ -88,6 +88,14 @@ class Case:
         """
         pass
 
+    def __assertEqual(self, value, expected, caller):
+        if value == expected:
+            result = makeResult(self.id, caller, Status.Ok)
+        else:
+            result = makeResult(
+                self.id, caller, Status.Fail, "{0} is not equal to {1}".format(value, expected))
+        self.results.append(result)
+
     def assertEqual(self, value, expected):
         """Checks whether value is equal to expected.
 
@@ -95,11 +103,7 @@ class Case:
                 value (object): The value to be tested.
                 expected (object): The value to be compared to.
         """
-        if value == expected:
-            self.results.append(Result(self.id, Status.Ok, ""))
-        else:
-            self.results.append(Result(self.id, Status.Fail,
-                                       "{0} is not {1}".format(value, expected)))
+        self.__assertEqual(value, expected, "assertEqual")
 
     def assertNotEqual(self, value, expected):
         """Checks whether value is not equal to expected.
@@ -109,10 +113,11 @@ class Case:
                 expected (object): The value to be compared to.
         """
         if value != expected:
-            self.results.append(Result(self.id, Status.Ok, ""))
+            result = makeResult(self.id, "assertNotEqual", Status.Ok)
         else:
-            self.results.append(Result(self.id, Status.Fail,
-                                       "{0} is not {1}".format(value, expected)))
+            result = makeResult(
+                self.id, "assertNotEqual", Status.Fail, "{0} is equal to {1}".format(value, expected))
+        self.results.append(result)
 
     def assertTrue(self, value):
         """Checks whether value is to boolean value True.
@@ -120,7 +125,7 @@ class Case:
             Args:
                 value (boolean): The value to be checked.
         """
-        self.assertEqual(value, True)
+        self.__assertEqual(value, True, "assertTrue")
 
     def assertFalse(self, value):
         """Checks whether value is the boolean value False.
@@ -128,7 +133,15 @@ class Case:
             Args:
                 value (boolean): The value to be checked.
         """
-        self.assertEqual(value, False)
+        self.__assertEqual(value, False, "assertFalse")
+
+    def __assertIs(self, value, expected, caller):
+        if value is expected:
+            result = makeResult(self.id, caller, Status.Ok)
+        else:
+            result = makeResult(
+                self.id, caller, Status.Fail, "{0} is not {1}".format(value, expected))
+            self.results.append(result)
 
     def assertIs(self, value, expected):
         """Check whether value is expected.
@@ -137,11 +150,15 @@ class Case:
                 value (object): The value to be checked.
                 expected (object): The value to be compared to.
         """
+        self.__assertIs(value, expected, "assertIs")
+
+    def __assertIsNot(self, value, expected, caller):
         if value is expected:
-            self.results.append(Result(self.id, Status.Ok, ""))
+            result = makeResult(self.id, caller, Status.Ok)
         else:
-            self.results.append(Result(self.id, Status.Fail,
-                                       "{0} is not {1}".format(value, expected)))
+            result = makeResult(
+                self.id, caller, Status.Fail, "{0} is {1}".format(value, expected))
+        self.results.append(result)
 
     def assertIsNot(self, value, expected):
         """Check whether the value is not expected.
@@ -150,11 +167,7 @@ class Case:
                 value (object): The value to be checked.
                 expected (object): The value to be compared to.
         """
-        if value is not expected:
-            self.results.append(Result(self.id, Status.Ok, ""))
-        else:
-            self.results.append(Result(self.id, Status.Fail,
-                                       "{0} is {1}".format(value, expected)))
+        self.__assertIsNot(value, expected, "assertIsNot")
 
     def assertIsNone(self, value):
         """Checks whether value is None.
@@ -162,7 +175,7 @@ class Case:
             Args:
                 value (object): The value to be checked.
         """
-        self.assertIs(value, None)
+        self.__assertIs(value, None, "assertIsNone")
 
     def assertIsNotNone(self, value):
         """Checks whether the value is not None.
@@ -170,7 +183,7 @@ class Case:
             Args:
                 value (object): The value to be checked.
         """
-        self.assertIsNot(value, None)
+        self.__assertIsNot(value, None, "assertIsNotNone")
 
     def assertIn(self, value, collection):
         """Checks whether value is in the collection.
@@ -180,10 +193,11 @@ class Case:
                 collection (object): The collection the object should be in.
         """
         if value in collection:
-            self.results.append(Result(self.id, Status.Ok, ""))
+            result = makeResult(self.id, "assertIn", Status.Ok)
         else:
-            self.results.append(
-                Result(self.id, Status.Fail, "{0} is not in {1}".format(value, collection)))
+            result = makeResult(self.id, "assertIn", Status.Fail,
+                                "{0} is not in {1}".format(value, collection))
+        self.results.append(result)
 
     def assertNotIn(self, value, collection):
         """Checks whether value is not in the collection.
@@ -192,11 +206,12 @@ class Case:
                 value (object): The value to be checked.
                 collection (object): The collection the object should not be in.
         """
-        if value not in collection:
-            self.results.append(Result(self.id, Status.Ok, ""))
+        if value in collection:
+            result = makeResult(self.id, "assertNotIn", Status.Ok)
         else:
-            self.results.append(
-                Result(self.id, Status.Fail, "{0} is in {1}".format(value, collection)))
+            result = makeResult(self.id, "assertNotIn", Status.Fail,
+                                "{0} is in {1}".format(value, collection))
+        self.results.append(result)
 
     def assertRaises(self, exception, func, *args, **kwargs):
         """Checks whether the function 'func' raises an expection of type 'exception'.
@@ -208,42 +223,8 @@ class Case:
         """
         try:
             func(*args, **kwargs)
-            self.results.append(Result(
-                self.id, Status.Fail, "{0} did not throw {1}".format(func.__name__, exception.__name__)))
+            result = makeResult(self.id, "assertRaises", Status.Fail, "{0} did not throw {1}".format(
+                func.__name__, exception.__name__))
         except exception as e:
-            self.results.append(Result(self.id, Status.Ok, ""))
-
-    def failUnless(self, value, expected):
-        """Fails the case, if value is not equal to expected.
-
-            Args:
-                value (object): The value to be checked.
-                expected (object): The value to be compared to.
-        """
-        if value == expected:
-            self.results.append(Result(self.id, Status.Ok, ""))
-        else:
-            self.results.append(
-                Result(self.id, Status.Error, "{0} is not {1} | Execution stopped.".format(value, expected)))
-            raise FailError("")
-
-
-class FailError(Exception):
-    """An exception that shows a failure condition was met.
-
-        Attributes:
-            message (str): A user-defined message.
-    """
-
-    def __init__(self, message):
-        """Creates an exception with a user-defined message.
-
-            Args:
-                message (str): The message.
-        """
-        self.message = message
-
-    def __str__(self):
-        """Returns the message.
-        """
-        return self.message
+            result = makeResult(self.id, "assertRaises", Status.Ok)
+        self.results.append(result)
