@@ -58,7 +58,11 @@ class Case:
             finishedTests.append((self.id, test))
             self.id = self.id + 1
 
+        print("Case: {0}".format(self.name))
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         self.__printResults(finishedTests)
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
 
     def __printResults(self, tests):
         if tests is not None:
