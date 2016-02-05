@@ -58,20 +58,24 @@ class Case:
             finishedTests.append((self.id, test))
             self.id = self.id + 1
 
-        print("Case: {0}".format(self.name))
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         self.__printResults(finishedTests)
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
 
     def __printResults(self, tests):
         if tests is not None:
+            print("Case -> {0}".format(self.name))
+
             size = len(tests)
 
             idLength = int(floor(log10(size)))
             nameLength = max([len(test[1]) for test in tests])
             statusLength = 12   # Status.Fail is longest output
             callerLength = max([len(result.caller) for result in self.results])
+            messageLength = max([len(result.message)
+                                 for result in self.results])
+
+            for i in range(0, idLength + 3 + nameLength + 2 + statusLength + 1 + callerLength + 1 + messageLength):
+                print("-", end="")
+            print("")
 
             for i in range(0, self.id):
                 # Get all results for that test with id i.
@@ -81,6 +85,10 @@ class Case:
                         i, [test[1]for test in tests if i == test[0]][0],
                         result.status, result.message, result.caller, idLength=idLength,
                         nameLength=nameLength, statusLength=statusLength, callerLength=callerLength))
+
+            for i in range(0, idLength + 3 + nameLength + 2 + statusLength + 1 + callerLength + 1 + messageLength):
+                print("-", end="")
+            print("")
 
     def setup(self):
         """The setup method is executed before every single test.
