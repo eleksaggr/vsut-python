@@ -14,18 +14,6 @@ class UnitTest(vsut.unit.Case):
 ```
 Any methods that start with 'test' will be executed automatically, once the case is run.
 
-Test-cases must be added to a Suite in order to be run:
-```python
-suite = Suite("Test Suite")
-case = Case("Test Case")
-
-suite.add(case)
-suite.run()
-```
-The following options can be specified, when running a suite:
-* __verbose__ (Default: True): Will show the result for every condition of a test in the output.
-* __out__ (Default: stdout): A stream the output will be printed to.
-
 ## Asserts & Fail Conditions
 The following methods can be used in a test-case to check for success or failure:
 * ```assertEqual(value, expected)``` - Checks for equality of the two arguments.
@@ -39,15 +27,14 @@ The following methods can be used in a test-case to check for success or failure
 * ```assertIsNone(value)``` - Checks whether the argument is None.
 * ```assertIsNotNone(value)``` - Checks whether the argument is not None.
 * ```assertRaises(exception, func, *args, **kwargs)``` - Checks whether the function 'func' raises an exception of the type 'exception'.
-* ```failUnless(value, expected)``` - Fails the case, if value is not equal to expected.
 
 ## Full Example
 ```python
-from vsut.unit import Case, Suite
+from vsut.unit import Case
 
 class TestCase(Case):
 
-    def testExample():
+    def testExample(self):
         a = True
         b = True
         c = False
@@ -55,27 +42,15 @@ class TestCase(Case):
         self.assertEqual(b, c)
 
 if __name__ == "__main__":
-    suite = Suite("Suite 1")
     case = TestCase("Case 1")
-
-    suite.add(case)
-    suite.run()
+    case.run()
 ```
 
-The output with **verbose=False**:
+## Output
 ```
-Suite: Suite 1
-***************************************************************
 Case: Case 1
-  [0]testExample:       Fail
-***************************************************************
-```
-With **verbose=True**:
-```
-Suite: Suite 1
-***************************************************************
-Case: Case 1
-  [0]testExample:       Ok
-  [0]testExample:       Fail...(True is not False)
-***************************************************************
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+[0] testExample: Status.Ok   |[assertEqual]
+[0] testExample: Status.Fail |[assertEqual] -> True is not equal to False
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ```
