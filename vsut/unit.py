@@ -210,7 +210,7 @@ class Case:
                 value (object): The value to be checked.
                 collection (object): The collection the object should not be in.
         """
-        if value in collection:
+        if value not in collection:
             result = makeResult(self.id, "assertNotIn", Status.Ok)
         else:
             result = makeResult(self.id, "assertNotIn", Status.Fail,
