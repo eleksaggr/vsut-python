@@ -1,125 +1,19 @@
 from collections import namedtuple
 from enum import Enum
+from math import floor, log10
 from sys import stdout
 
-Result = namedtuple('Result', 'id status message')
-Status = Enum('Status', 'Ok, Fail, Error')
+Result = namedtuple('Result', 'id caller status message')
+Status = Enum('Status', 'Ok, Fail')
 
 
-class Suite:
-    """A Suite is a group of cases, that are executed sequentially.
-
-        Attributes:
-            name (str): The name of the suite.
-            cases ([Case]): The cases that belong to this suite.
-    """
-
-    def __init__(self, name):
-        """Creates an empty Suite with the given name.
-
-            Args:
-                name (str): The name of the suite.
-        """
-        self.name = name
-        self.cases = []
-
-    def add(self, case):
-        """Adds a case to the suite.
-
-            Args:
-                case (Case): The case that will be added.
-        """
-        if case is not None and isinstance(case, Case):
-            self.cases.append(case)
-
-    def run(self, out=stdout, verbose=True):
-        """Runs all cases the suite has sequentially and prints them to the output.
-
-            Args:
-                out (Optional(file)): The output the suite will print to, default is stdout.
-                verbose (Optional(boolean)): Whether the output should be verbose, defaults to True.
-        """
-        # Execute all cases.
-        for case in self.cases:
-            try:
-                # Run all methods of the case that start with 'test'.
-                tests = [method for method in dir(case)
-                         if callable(getattr(case, method)) and method.startswith("test")]
-                for test in tests:
-                    func = getattr(case, test, None)
-
-                    # Add the name of the test to the case, together with its
-                    # id.
-                    case.tests.append((case.id, test))
-
-                    case.setup()
-                    func()
-                    case.teardown()
-
-                    case.id = case.id + 1
-            except FailError as e:
-                # If we hit a FailError, stop execution and skip to the next
-                # case.
-                pass
-
-        # Print everything to the output.
-        print("Suite: {0}".format(self.name), file=out)
-        print("***************************************************************")
-        for case in self.cases:
-            self.__printCase(out, case, verbose)
-        print("***************************************************************")
-
-    def __printCase(self, out, case, verbose):
-        """Prints a case to the output.
-
-            Args:
-                out (file): The output the method prints to.
-                case (Case): The case that will be printed.
-                verbose (boolean): Whether the output should be verbose.
-        """
-        print("Case: {0}".format(case.name))
-
-        for test in case.tests:
-            id = test[0]
-            name = test[1]
-
-            # Check if the test passed all its conditions.
-            statuses = [
-                result.status for result in case.results if result.id == id]
-            status = Status.Ok
-            for s in statuses:
-                if s != Status.Ok:
-                    status = s
-                    break
-
-            if verbose:
-                for result in case.results:
-                    if result.id == id:
-                        # Add parentheses to the message.
-                        message = ""
-                        if result.message is not None and result.message != "":
-                            message = "...({0})".format(result.message)
-
-                        # Convert status enum to string.
-                        if result.status == Status.Ok:
-                            status = "Ok"
-                        elif result.status == Status.Fail:
-                            status = "Fail"
-                        else:
-                            status = "Error"
-
-                        print("  [{0}]{1}:\t{2}{3}".format(
-                            id, name, status, message), file=out)
-            else:
-                if status == Status.Ok:
-                    print("  [{0}]{1}:\t{2}".format(
-                        id, name, "Ok"), file=out)
-                elif status == Status.Fail:
-                    print("  [{0}]{1}:\t{2}".format(
-                        id, name, "Fail"), file=out)
-                else:
-                    print("  [{0}]{1}:\t{2}".format(
-                        id, name, "Error"), file=out)
+def makeResult(id, caller, status, message=""):
+    result = None
+    if(id >= 0 and caller is not None and status is not None and message is not None):
+        if message != "":
+            message = "-> {0}".format(message)
+        result = Result(id, "[{0}]".format(caller), status, message)
+    return result
 
 
 class Case:
@@ -141,7 +35,48 @@ class Case:
         self.name = name
         self.id = 0
         self.results = []
-        self.tests = []
+        self.tests = [method for method in dir(self)
+                      if callable(getattr(self, method)) and method.startswith("test")]
+
+    def run(self):
+        # Reset the id counter.
+        self.id = 0
+
+        finishedTests = []
+        for test in self.tests:
+            func = getattr(self, test, None)
+
+            # Run the setup method.
+            self.setup()
+            # Run the test method.
+            func()
+            # Run the teardown method.
+            self.teardown()
+
+            # Add the test to the finishedTests list and increment the id
+            # counter.
+            finishedTests.append((self.id, test))
+            self.id = self.id + 1
+
+        self.__printResults(finishedTests)
+
+    def __printResults(self, tests):
+        if tests is not None:
+            size = len(tests)
+
+            idLength = int(floor(log10(size)))
+            nameLength = max([len(test[1]) for test in tests])
+            statusLength = 12   # Status.Fail is longest output
+            callerLength = max([len(result.caller) for result in self.results])
+
+            for i in range(0, self.id):
+                # Get all results for that test with id i.
+                results = [result for result in self.results if result.id == i]
+                for result in results:
+                    print("[{0:<{idLength}}] {1:<{nameLength}}: {2:<{statusLength}}|{4:>{callerLength}} {3}".format(
+                        i, [test[1]for test in tests if i == test[0]][0],
+                        result.status, result.message, result.caller, idLength=idLength,
+                        nameLength=nameLength, statusLength=statusLength, callerLength=callerLength))
 
     def setup(self):
         """The setup method is executed before every single test.
