@@ -5,7 +5,7 @@
 A unit can be described as a test-case, like follows:
 ```python
 ...
-class UnitTest(vsut.unit.Case):
+class UnitTest(vsut.unit.Unit):
 
     def testComponentOne(self):
         ...
@@ -16,41 +16,47 @@ Any methods that start with 'test' will be executed automatically, once the case
 
 ## Asserts & Fail Conditions
 The following methods can be used in a test-case to check for success or failure:
-* ```assertEqual(value, expected)``` - Checks for equality of the two arguments.
-* ```assertNotEqual(value, expected)``` - Checks for inequality of the two arguments.
-* ```assertTrue(value)``` - Checks whether the argument is the boolean value True.
-* ```assertFalse(value)``` - Checks whether the argument is the boolean value False.
-* ```assertIn(value, collection)``` - Checks whether the argument is in the collection.
-* ```assertNotIn(value, collection)``` - Checks whether the argument is not in the collection.
-* ```assertIs(value, expected)``` - Checks whether the value is the expected.
-* ```assertIsNot(value, expected)``` - Checks whether the value is not the expected.
-* ```assertIsNone(value)``` - Checks whether the argument is None.
-* ```assertIsNotNone(value)``` - Checks whether the argument is not None.
-* ```assertRaises(exception, func, *args, **kwargs)``` - Checks whether the function 'func' raises an exception of the type 'exception'.
+* ```assertEqual(expected, actual)``` - Checks for equality of the two arguments.
+* ```assertNotEqual(expected, actual)``` - Checks for inequality of the two arguments.
+* ```assertTrue(expected)``` - Checks whether the argument is the boolean value True.
+* ```assertFalse(expected)``` - Checks whether the argument is the boolean value False.
+* ```assertIn(expected, collection)``` - Checks whether the argument is in the collection.
+* ```assertNotIn(expected, collection)``` - Checks whether the argument is not in the collection.
+* ```assertIs(expected, actual)``` - Checks whether the value is the expected.
+* ```assertIsNot(expected, actual)``` - Checks whether the value is not the expected.
+* ```assertIsNone(expected)``` - Checks whether the argument is None.
+* ```assertIsNotNone(expected)``` - Checks whether the argument is not None.
+* ```assertRaises(exception, func, *args)``` - Checks whether the function 'func' raises an exception of the type 'exception'.
+
+For any of these methods a **message** parameter can be specified, that will be printed instead of the default message.
+#### Example
+```python
+...
+assertEqual(True, False, message="True is not False")
+...
+```
 
 ## Full Example
 ```python
-from vsut.unit import Case
+from vsut.unit import Unit
+from vsut.assertion import assertEqual
 
-class TestCase(Case):
+class TestCase(Unit):
 
     def testExample(self):
         a = True
         b = True
         c = False
-        self.assertEqual(a, b)
-        self.assertEqual(b, c)
+        assertEqual(a, b)
+        assertEqual(b, c)
 
 if __name__ == "__main__":
-    case = TestCase("Case 1")
+    case = TestCase()
     case.run()
 ```
 
 ## Output
 ```
-Case: Case 1
--------------------------------------------------------------------------
-[0] testExample: Status.Ok   |[assertEqual]
-[0] testExample: Status.Fail |[assertEqual] -> True is not equal to False
--------------------------------------------------------------------------
+Case -> TestCase
+    [0] testExample -> Fail | [assertEqual] -> True != False
 ```
