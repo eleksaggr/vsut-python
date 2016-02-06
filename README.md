@@ -49,11 +49,12 @@ class TestCase(Unit):
         c = False
         assertEqual(a, b)
         assertEqual(b, c)
-
-if __name__ == "__main__":
-    case = TestCase()
-    case.run()
 ```
+Run it with the test runner:
+```
+python runner.py module.TestClass module1.TestClass1 ...
+```
+
 
 ## Output
 ```
