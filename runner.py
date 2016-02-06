@@ -16,7 +16,7 @@ if __name__ == "__main__":
             unit.run()
 
             formatter = TableFormatter(unit)
-            formatter.print()
+            print(formatter.format())
         except ImportError as e:
             #TODO: Handle this import error.
             print(e)

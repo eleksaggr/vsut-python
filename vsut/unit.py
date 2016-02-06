@@ -8,6 +8,16 @@ AssertionFail = namedtuple("Fail", "id, exception")
 
 
 class Unit():
+    """A unit is a group of tests, that are run at once.
+
+    Every method of this class, that starts with 'test' will be run automatically,
+    when the run()-method is called.
+    Before and after every test the setup and teardown methods will be called respectively.
+
+        Attributes:
+            tests ([(int, str)]): A list of tests for this unit.
+            failedAssertions ([AssertionFail]): Failed assertions in this unit.
+    """
 
     def __init__(self):
         self.tests = [(id, funcName) for id, funcName in enumerate([method for method in dir(self)
@@ -15,6 +25,8 @@ class Unit():
         self.failedAssertions = []
 
     def run(self):
+        """Runs all tests in this unit.
+        """
         for id, test in self.tests:
             try:
                 # Get the method that needs to be executed.
@@ -30,26 +42,38 @@ class Unit():
                 self.failedAssertions.append(AssertionFail(id, e))
 
     def setup(self):
+        """Setup is executed before every test.
+        """
         pass
 
     def teardown(self):
+        """Teardown is executed after every test.
+        """
         pass
 
 
 class Formatter():
+    """A Formatter formats the results of a unit for viewing.
+    """
 
-    def __init__(self, unit, out=stdout):
+    def __init__(self, unit):
         self.unit = unit
-        self.output = out
 
-    def print(self):
+    def format(self):
+        """Formats the result of a unit.
+        """
         pass
 
 
 class TableFormatter(Formatter):
+    """A TableFormatter formats the results of a unit as a table.
 
-    def print(self):
-        print("Case -> {0}".format(type(self.unit).__name__), file=self.output)
+    The table looks as follows:
+    [Id] Testname -> Status (| [Assertion] -> Message)
+    """
+
+    def format(self):
+        ret = "Case -> {0}\n".format(type(self.unit).__name__)
 
         idLength = int(floor(log10(len(self.unit.tests)))) + 3
         nameLength = max([len(test[1]) for test in self.unit.tests])
@@ -64,12 +88,13 @@ class TableFormatter(Formatter):
             fails = [
                 fail.exception for fail in self.unit.failedAssertions if fail.id == id]
             if len(fails) == 0:
-                print("\t{0:>{idLength}} {1:<{nameLength}} -> Ok".format(
-                    "[{0}]".format(id), test, idLength=idLength, nameLength=nameLength), file=self.output)
+                ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Ok\n".format(
+                    "[{0}]".format(id), test, idLength=idLength, nameLength=nameLength)
             else:
                 for fail in fails:
                     message = fail.message
                     if message is not None and message != "":
                         message = "-> {0}".format(fail.message)
-                    print("\t{0:>{idLength}} {1:<{nameLength}} -> Fail | {2:<{assertLength}} {3}".format("[{0}]".format(id), test, "[{0}]".format(
-                        fail.assertion.__name__), message, idLength=idLength, nameLength=nameLength, assertLength=assertLength), file=self.output)
+                    ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Fail | {2:<{assertLength}} {3}\n".format("[{0}]".format(id), test, "[{0}]".format(
+                        fail.assertion.__name__), message, idLength=idLength, nameLength=nameLength, assertLength=assertLength)
+        return ret
