@@ -64,6 +64,9 @@ class Formatter():
         """
         pass
 
+    def __str__(self):
+        return self.format()
+
 
 class TableFormatter(Formatter):
     """A TableFormatter formats the results of a unit as a table.
@@ -97,4 +100,23 @@ class TableFormatter(Formatter):
                         message = "-> {0}".format(fail.message)
                     ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Fail | {2:<{assertLength}} {3}\n".format("[{0}]".format(id), test, "[{0}]".format(
                         fail.assertion.__name__), message, idLength=idLength, nameLength=nameLength, assertLength=assertLength)
+        return ret
+
+
+class CSVFormatter(Formatter):
+    """
+    """
+
+    def format(self, separator=","):
+        ret = "{0}\n".format(type(self.unit).__name__)
+
+        for id, test in self.unit.tests:
+            fails = [
+                fail.exception for fail in self.unit.failedAssertions if fail.id == id]
+            if len(fails) == 0:
+                ret += "{1}{0}{2}{0}Ok\n".format(separator, id, test)
+            else:
+                for fail in fails:
+                    ret += "{1}{0}{2}{0}Fail{0}{3}{0}{4}\n".format(
+                        separator, id, test, fail.assertion.__name__, fail.message)
         return ret

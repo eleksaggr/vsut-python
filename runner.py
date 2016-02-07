@@ -1,5 +1,5 @@
 import sys
-from vsut.unit import TableFormatter
+from vsut.unit import CSVFormatter, TableFormatter
 
 if __name__ == "__main__":
     for i in range(1, len(sys.argv)):
