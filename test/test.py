@@ -1,4 +1,4 @@
-from vsut.unit import Unit
+from vsut.unit import Unit, expectFailure
 from vsut.assertion import assertEqual, assertNotEqual, assertFalse, assertTrue, assertIn, assertNotIn, assertIs, assertIsNot, assertIsNone, assertIsNotNone, assertRaises
 
 
@@ -12,6 +12,14 @@ class TestCase(Unit):
     #
 
     def testAssertEqual(self):
+        assertEqual(1, 1)
+
+    @expectFailure
+    def testAssertEqualFail(self):
+        assertEqual(1, 2)
+
+    @expectFailure
+    def testAssertEqualFailFail(self):
         assertEqual(1, 1)
 
     def testAssertNotEqual(self):
