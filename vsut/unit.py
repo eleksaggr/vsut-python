@@ -75,7 +75,7 @@ class TableFormatter(Formatter):
     """A TableFormatter formats the results of a unit as a table.
 
     The table looks as follows:
-    [Id] Testname -> Status (| [Assertion] -> Message)
+    [Id] Testname -> Status Optional(| [Assertion] -> Message)
     """
 
     def format(self):
