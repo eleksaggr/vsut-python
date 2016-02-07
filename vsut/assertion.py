@@ -8,12 +8,12 @@ def assertEqual(expected, actual, message=""):
                 that is displayed if the assertion fails.
 
         Raises:
-            AssertException: If an assertion fails.
+            AssertResult: If an assertion fails.
     """
     if expected != actual:
         if message == "":
             message = "{0} != {1}".format(expected, actual)
-        raise AssertException(assertEqual, message)
+        raise AssertResult(assertEqual.__name__, message)
 
 
 def assertNotEqual(expected, actual, message=""):
@@ -26,12 +26,12 @@ def assertNotEqual(expected, actual, message=""):
                 that is displayed if the assertion fails.
 
         Raises:
-            AssertException: If an assertion fails.
+            AssertResult: If an assertion fails.
     """
     if expected == actual:
         if message == "":
             message = "{0} == {1}".format(expected, actual)
-        raise AssertException(assertNotEqual, message)
+        raise AssertResult(assertNotEqual.__name__, message)
 
 
 def assertTrue(expected, message=""):
@@ -43,12 +43,12 @@ def assertTrue(expected, message=""):
                 that is displayed if the assertion fails.
 
             Raises:
-                AssertException: If an assertion fails.
+                AssertResult: If an assertion fails.
     """
     if expected != True:
         if message == "":
             message = "{0} != True".format(expected)
-        raise AssertException(assertTrue, message)
+        raise AssertResult(assertTrue.__name__, message)
 
 
 def assertFalse(expected, message=""):
@@ -60,12 +60,12 @@ def assertFalse(expected, message=""):
                 that is displayed if the assertion fails.
 
         Raises:
-            AssertException: If an assertion fails.
+            AssertResult: If an assertion fails.
     """
     if expected != False:
         if message == "":
             message = "{0} != False".format(expected)
-        raise AssertException(assertFalse, message)
+        raise AssertResult(assertFalse.__name__, message)
 
 
 def assertIs(expected, actual, message=""):
@@ -78,12 +78,12 @@ def assertIs(expected, actual, message=""):
                 that is displayed if the assertion fails.
 
         Raises:
-            AssertException: If an assertion fails.
+            AssertResult: If an assertion fails.
     """
     if expected is not actual:
         if message == "":
             message = "{0} is not {1}".format(expected, actual)
-        raise AssertException(assertIs, message)
+        raise AssertResult(assertIs.__name__, message)
 
 
 def assertIsNot(expected, actual, message=""):
@@ -96,12 +96,12 @@ def assertIsNot(expected, actual, message=""):
                 that is displayed if the assertion fails.
 
         Raises:
-            AssertException: If an assertion fails.
+            AssertResult: If an assertion fails.
     """
     if expected is actual:
         if message == "":
             message = "{0} is {1}".format(expected, actual)
-        raise AssertException(assertIsNot, message)
+        raise AssertResult(assertIsNot.__name__, message)
 
 
 def assertIsNone(expected, message=""):
@@ -113,12 +113,12 @@ def assertIsNone(expected, message=""):
                 that is displayed if the assertion fails.
 
         Raises:
-            AssertException: If an assertion fails.
+            AssertResult: If an assertion fails.
     """
     if expected != None:
         if message == "":
             message = "{0} is not None".format(expected)
-        raise AssertException(assertIsNone, message)
+        raise AssertResult(assertIsNone.__name__, message)
 
 
 def assertIsNotNone(expected, message=""):
@@ -130,12 +130,12 @@ def assertIsNotNone(expected, message=""):
                 that is displayed if the assertion fails.
 
         Raises:
-            AssertException: If an assertion fails.
+            AssertResult: If an assertion fails.
     """
     if expected == None:
         if message == "":
             message = "{0} is None".format(expected)
-        raise AssertException(assertIsNotNone, message)
+        raise AssertResult(assertIsNotNone.__name__, message)
 
 
 def assertIn(expected, collection, message=""):
@@ -148,12 +148,12 @@ def assertIn(expected, collection, message=""):
                 that is displayed if the assertion fails.
 
         Raises:
-            AssertException: If an assertion fails.
+            AssertResult: If an assertion fails.
     """
     if expected not in collection:
         if message == "":
             message = "{0} not in {1}".format(expected, collection)
-        raise AssertException(assertIn, message)
+        raise AssertResult(assertIn.__name__, message)
 
 
 def assertNotIn(expected, collection, message=""):
@@ -166,12 +166,12 @@ def assertNotIn(expected, collection, message=""):
                 that is displayed if the assertion fails.
 
         Raises:
-            AssertException: If an assertion fails.
+            AssertResult: If an assertion fails.
     """
     if expected in collection:
         if message == "":
             message = "{0} in {1}".format(expected, collection)
-        raise AssertException(assertNotIn, message)
+        raise AssertResult(assertNotIn.__name__, message)
 
 
 def assertRaises(exception, func, *args, message=""):
@@ -189,12 +189,12 @@ def assertRaises(exception, func, *args, message=""):
         if message == "":
             message = "{0} did not raise {1}".format(
                 func.__name__, exception.__name__)
-        raise AssertException(assertRaises, message)
+        raise AssertResult(assertRaises.__name__, message)
     except exception as e:
         pass
 
 
-class AssertException(Exception):
+class AssertResult(Exception):
 
     def __init__(self, assertion, message):
         self.assertion = assertion

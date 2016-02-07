@@ -2,7 +2,7 @@ from collections import namedtuple
 from enum import Enum
 from math import floor, log10
 from sys import stdout
-from vsut.assertion import AssertException
+from vsut.assertion import AssertResult
 
 AssertionFail = namedtuple("Fail", "id, exception")
 
@@ -22,7 +22,7 @@ class Unit():
     def __init__(self):
         self.tests = [(id, funcName) for id, funcName in enumerate([method for method in dir(self)
                                                                     if callable(getattr(self, method)) and method.startswith("test")])]
-        self.failedAssertions = []
+        self.results = {}
 
     def run(self):
         """Runs all tests in this unit.
@@ -38,8 +38,11 @@ class Unit():
                 func()
                 # Run the teardown method.
                 self.teardown()
-            except AssertException as e:
-                self.failedAssertions.append(AssertionFail(id, e))
+            except AssertResult as e:
+                result = e
+            else:
+                result = None
+            self.results[id] = result
 
     def setup(self):
         """Setup is executed before every test.
@@ -76,30 +79,52 @@ class TableFormatter(Formatter):
     """
 
     def format(self):
+        # ret = "Case -> {0}\n".format(type(self.unit).__name__)
+        #
+        # idLength = int(floor(log10(len(self.unit.tests)))) + 3
+        # nameLength = max([len(test[1]) for test in self.unit.tests])
+        #
+        # if len(self.unit.failedAssertions) != 0:
+        #     assertLength = max(
+        #         [len(fail.exception.assertion.__name__) for fail in self.unit.failedAssertions]) + 2
+        # else:
+        #     assertLength = 0
+        #
+        # for id, test in self.unit.tests:
+        #     fails = [
+        #         fail.exception for fail in self.unit.failedAssertions if fail.id == id]
+        #     if len(fails) == 0:
+        #         ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Ok\n".format(
+        #             "[{0}]".format(id), test, idLength=idLength, nameLength=nameLength)
+        #     else:
+        #         for fail in fails:
+        #             message = fail.message
+        #             if message is not None and message != "":
+        #                 message = "-> {0}".format(fail.message)
+        #             ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Fail | {2:<{assertLength}} {3}\n".format("[{0}]".format(id), test, "[{0}]".format(
+        #                 fail.assertion.__name__), message, idLength=idLength, nameLength=nameLength, assertLength=assertLength)
+        # return ret
+        # Add the title of the case.
         ret = "Case -> {0}\n".format(type(self.unit).__name__)
 
         idLength = int(floor(log10(len(self.unit.tests)))) + 3
         nameLength = max([len(test[1]) for test in self.unit.tests])
-
-        if len(self.unit.failedAssertions) != 0:
-            assertLength = max(
-                [len(fail.exception.assertion.__name__) for fail in self.unit.failedAssertions]) + 2
-        else:
-            assertLength = 0
+        assertLength = max([len(result.assertion)
+                            for result in self.unit.results.values() if result is not None]) + 2
 
         for id, test in self.unit.tests:
-            fails = [
-                fail.exception for fail in self.unit.failedAssertions if fail.id == id]
-            if len(fails) == 0:
+            result = self.unit.results[id]
+            if result == None:
                 ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Ok\n".format(
                     "[{0}]".format(id), test, idLength=idLength, nameLength=nameLength)
             else:
-                for fail in fails:
-                    message = fail.message
-                    if message is not None and message != "":
-                        message = "-> {0}".format(fail.message)
-                    ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Fail | {2:<{assertLength}} {3}\n".format("[{0}]".format(id), test, "[{0}]".format(
-                        fail.assertion.__name__), message, idLength=idLength, nameLength=nameLength, assertLength=assertLength)
+                message = result.message
+                if message is not None and message != "":
+                    message = "-> {0}".format(result.message)
+
+                ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Fail | {2:<{assertLength}} {3}\n".format("[{0}]".format(id), test, "[{0}]".format(
+                    result.assertion), message, idLength=idLength, nameLength=nameLength, assertLength=assertLength)
+
         return ret
 
 
@@ -111,12 +136,10 @@ class CSVFormatter(Formatter):
         ret = "{0}\n".format(type(self.unit).__name__)
 
         for id, test in self.unit.tests:
-            fails = [
-                fail.exception for fail in self.unit.failedAssertions if fail.id == id]
-            if len(fails) == 0:
+            result = self.unit.results[id]
+            if result is None:
                 ret += "{1}{0}{2}{0}Ok\n".format(separator, id, test)
             else:
-                for fail in fails:
-                    ret += "{1}{0}{2}{0}Fail{0}{3}{0}{4}\n".format(
-                        separator, id, test, fail.assertion.__name__, fail.message)
+                ret += "{1}{0}{2}{0}Fail{0}{3}{0}{4}\n".format(
+                    separator, id, test, result.assertion, result.message)
         return ret
