@@ -4,7 +4,13 @@ from math import floor, log10
 from sys import stdout
 from vsut.assertion import AssertResult
 
-AssertionFail = namedtuple("Fail", "id, exception")
+
+def expectFailure(func):
+    def wrapper(self):
+        if func.__name__ not in self.expectedFails:
+            self.expectedFails.append(func.__name__)
+        func(self)
+    return wrapper
 
 
 class Unit():
@@ -22,6 +28,7 @@ class Unit():
     def __init__(self):
         self.tests = [(id, funcName) for id, funcName in enumerate([method for method in dir(self)
                                                                     if callable(getattr(self, method)) and method.startswith("test")])]
+        self.expectedFails = []
         self.results = {}
 
     def run(self):
@@ -43,6 +50,14 @@ class Unit():
             else:
                 result = None
             self.results[id] = result
+
+        for name in self.expectedFails:
+            id = [test[0] for test in self.tests if test[1] == name][0]
+            if self.results[id] is None:
+                self.results[id] = AssertResult(
+                    "None", "The method was expected to fail.")
+            else:
+                self.results[id] = None
 
     def setup(self):
         """Setup is executed before every test.
