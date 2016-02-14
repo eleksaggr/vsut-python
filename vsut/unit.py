@@ -36,11 +36,11 @@ class Unit():
     def run(self):
         """Runs all tests in this unit.
         """
-        for id, test in self.tests.items():
+        for id, name in self.tests.items():
             start = clock()
             try:
                 # Get the method that needs to be executed.
-                func = getattr(self, test, None)
+                func = getattr(self, name, None)
 
                 # Run the setup method.
                 self.setup()
@@ -57,8 +57,8 @@ class Unit():
             elapsed = clock() - start
             self.times[id] = "{0:.6f}".format(elapsed)
 
-        for id, test in self.tests.items():
-            if test in self.expectedFails:
+        for id, name in self.tests.items():
+            if name in self.expectedFails:
                 if self.results[id] is None:
                     self.results[id] = AssertResult(
                         "None", "The method was expected to fail.")
@@ -128,11 +128,12 @@ class CSVFormatter(Formatter):
     def format(self, separator=","):
         ret = "{0}\n".format(type(self.unit).__name__)
 
-        for id, test in self.unit.tests.items():
+        for id, name in self.unit.tests.items():
             result = self.unit.results[id]
             if result is None:
-                ret += "{1}{0}{2}{0}Ok\n".format(separator, id, test)
+                ret += "{1}{0}{2}{0}Ok{0}{3}\n".format(
+                    separator, id, name, self.unit.times[id])
             else:
-                ret += "{1}{0}{2}{0}Fail{0}{3}{0}{4}\n".format(
-                    separator, id, test, result.assertion, result.message)
+                ret += "{1}{0}{2}{0}Fail{0}{3}{0}{4}{0}{5}\n".format(
+                    separator, id, name, self.unit.times[id], result.assertion, result.message)
         return ret
