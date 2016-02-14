@@ -2,7 +2,7 @@
 **VSUT** is a simple unit test framework for Python.
 
 ## Usage
-A unit can be described as a test-case, like follows:
+A unit can be described , like follows:
 ```python
 ...
 class UnitTest(vsut.unit.Unit):
@@ -35,6 +35,18 @@ For any of these methods a **message** parameter can be specified, that will be 
 assertEqual(True, False, message="True is not False")
 ...
 ```
+
+## Expected Failures
+A test can be annotated with the `expectedFailure` decorator, as follows:
+```python
+...
+    @expectedFailure
+    def testThatWillFail(self):
+        ...
+...
+```
+Upon execution the unit will check, if the test really failed.
+Should this not be the case the test will be listed as a failure.
 
 ## Full Example
 ```python
