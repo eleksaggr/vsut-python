@@ -107,7 +107,7 @@ class TableFormatter(Formatter):
         assertLength = max([len(result.assertion)
                             for result in self.unit.results.values() if result is not None])
 
-        ret = ""
+        ret = "[{0}]\n".format(type(self.unit).__name__)
         ret += "{0:^3} | {1:^{nameLength}} | {2:^6} | {3:^8} | {4:^{assertLength}} | {5}\n".format(
             "Id", "Name", "Status", "Time", "Assert", "Message", nameLength=nameLength, assertLength=assertLength)
         for id, name in self.unit.tests.items():
