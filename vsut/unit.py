@@ -2,6 +2,7 @@ from collections import namedtuple
 from enum import Enum
 from math import floor, log10
 from sys import stdout
+from time import clock
 from vsut.assertion import AssertResult
 
 
@@ -26,15 +27,17 @@ class Unit():
     """
 
     def __init__(self):
-        self.tests = [(id, funcName) for id, funcName in enumerate([method for method in dir(self)
-                                                                    if callable(getattr(self, method)) and method.startswith("test")])]
+        self.tests = {id: funcName for id, funcName in enumerate([method for method in dir(self)
+                                                                  if callable(getattr(self, method)) and method.startswith("test")])}
+        self.times = {}
         self.expectedFails = []
         self.results = {}
 
     def run(self):
         """Runs all tests in this unit.
         """
-        for id, test in self.tests:
+        for id, test in self.tests.items():
+            start = clock()
             try:
                 # Get the method that needs to be executed.
                 func = getattr(self, test, None)
@@ -51,13 +54,16 @@ class Unit():
                 result = None
             self.results[id] = result
 
-        for name in self.expectedFails:
-            id = [test[0] for test in self.tests if test[1] == name][0]
-            if self.results[id] is None:
-                self.results[id] = AssertResult(
-                    "None", "The method was expected to fail.")
-            else:
-                self.results[id] = None
+            elapsed = clock() - start
+            self.times[id] = "{0:.6f}".format(elapsed)
+
+        for id, test in self.tests.items():
+            if test in self.expectedFails:
+                if self.results[id] is None:
+                    self.results[id] = AssertResult(
+                        "None", "The method was expected to fail.")
+                else:
+                    self.results[id] = None
 
     def setup(self):
         """Setup is executed before every test.
@@ -94,52 +100,24 @@ class TableFormatter(Formatter):
     """
 
     def format(self):
-        # ret = "Case -> {0}\n".format(type(self.unit).__name__)
-        #
-        # idLength = int(floor(log10(len(self.unit.tests)))) + 3
-        # nameLength = max([len(test[1]) for test in self.unit.tests])
-        #
-        # if len(self.unit.failedAssertions) != 0:
-        #     assertLength = max(
-        #         [len(fail.exception.assertion.__name__) for fail in self.unit.failedAssertions]) + 2
-        # else:
-        #     assertLength = 0
-        #
-        # for id, test in self.unit.tests:
-        #     fails = [
-        #         fail.exception for fail in self.unit.failedAssertions if fail.id == id]
-        #     if len(fails) == 0:
-        #         ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Ok\n".format(
-        #             "[{0}]".format(id), test, idLength=idLength, nameLength=nameLength)
-        #     else:
-        #         for fail in fails:
-        #             message = fail.message
-        #             if message is not None and message != "":
-        #                 message = "-> {0}".format(fail.message)
-        #             ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Fail | {2:<{assertLength}} {3}\n".format("[{0}]".format(id), test, "[{0}]".format(
-        #                 fail.assertion.__name__), message, idLength=idLength, nameLength=nameLength, assertLength=assertLength)
-        # return ret
-        # Add the title of the case.
-        ret = "Case -> {0}\n".format(type(self.unit).__name__)
 
-        idLength = int(floor(log10(len(self.unit.tests)))) + 3
-        nameLength = max([len(test[1]) for test in self.unit.tests])
+        # Get the maximum length of the name attribute.
+        nameLength = max([len(name) for name in self.unit.tests.values()])
+        # Get the maximum length of the assertion attribute.
         assertLength = max([len(result.assertion)
-                            for result in self.unit.results.values() if result is not None]) + 2
+                            for result in self.unit.results.values() if result is not None])
 
-        for id, test in self.unit.tests:
+        ret = ""
+        ret += "{0:^3} | {1:^{nameLength}} | {2:^6} | {3:^8} | {4:^{assertLength}} | {5}\n".format(
+            "Id", "Name", "Status", "Time", "Assert", "Message", nameLength=nameLength, assertLength=assertLength)
+        for id, name in self.unit.tests.items():
             result = self.unit.results[id]
             if result == None:
-                ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Ok\n".format(
-                    "[{0}]".format(id), test, idLength=idLength, nameLength=nameLength)
+                ret += "{0:<3} | {1:<{nameLength}} | {2:^6} | {3:<8} | {4:<{assertLength}} |\n".format(
+                    id, name, "OK", self.unit.times[id], "", nameLength=nameLength, assertLength=assertLength)
             else:
-                message = result.message
-                if message is not None and message != "":
-                    message = "-> {0}".format(result.message)
-
-                ret += "\t{0:>{idLength}} {1:<{nameLength}} -> Fail | {2:<{assertLength}} {3}\n".format("[{0}]".format(id), test, "[{0}]".format(
-                    result.assertion), message, idLength=idLength, nameLength=nameLength, assertLength=assertLength)
-
+                ret += "{0:<3} | {1:<{nameLength}} | {2:^6} | {3:<8} | {4:<{assertLength}} | {5}\n".format(
+                    id, name, "FAIL", self.unit.times[id], result.assertion, result.message, nameLength=nameLength, assertLength=assertLength)
         return ret
 
 
@@ -150,7 +128,7 @@ class CSVFormatter(Formatter):
     def format(self, separator=","):
         ret = "{0}\n".format(type(self.unit).__name__)
 
-        for id, test in self.unit.tests:
+        for id, test in self.unit.tests.items():
             result = self.unit.results[id]
             if result is None:
                 ret += "{1}{0}{2}{0}Ok\n".format(separator, id, test)
