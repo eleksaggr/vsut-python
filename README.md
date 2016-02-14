@@ -67,9 +67,9 @@ Run it with the test runner:
 python runner.py module.TestClass module1.TestClass1 ...
 ```
 
-
 #### Output
 ```
-Case -> TestCase
-    [0] testExample -> Fail | [assertEqual] -> True != False
+[TestCase]
+Id  |    Name     | Status |   Time   |   Assert    | Message
+0   | testExample |  FAIL  | 0.000027 | assertEqual | True != False
 ```
