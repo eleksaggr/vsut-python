@@ -1,3 +1,9 @@
+"""Assertions for testing of conditions.
+
+This module contains assertions that can be used in unit testing.
+"""
+
+
 def assertEqual(expected, actual, message=""):
     """Checks whether expected is equal to actual.
 
@@ -195,6 +201,12 @@ def assertRaises(exception, func, *args, message=""):
 
 
 class AssertResult(Exception):
+    """The result of an assertion.
+
+        Attributes:
+            assertion (str): The name of the assertion that delivered this result.
+            message (str): A message that came with the result.
+    """
 
     def __init__(self, assertion, message):
         self.assertion = assertion
