@@ -5,15 +5,6 @@ from sys import stdout
 from time import clock
 from vsut.assertion import AssertResult
 
-
-def expectFailure(func):
-    def wrapper(self):
-        if func.__name__ not in self.expectedFails:
-            self.expectedFails.append(func.__name__)
-        func(self)
-    return wrapper
-
-
 class Unit():
     """A unit is a group of tests, that are run at once.
 
@@ -64,6 +55,13 @@ class Unit():
                         "None", "The method was expected to fail.")
                 else:
                     self.results[id] = None
+
+    def expectFailure(func):
+        def wrapper(self):
+            if func.__name__ not in self.expectedFails:
+                self.expectedFails.append(func.__name__)
+            func(self)
+        return wrapper
 
     def setup(self):
         """Setup is executed before every test.
