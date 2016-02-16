@@ -62,14 +62,56 @@ class TestCase(Unit):
         assertEqual(a, b)
         assertEqual(b, c)
 ```
-Run it with the test runner:
-```
-python runner.py module.TestClass module1.TestClass1 ...
-```
 
-#### Output
+## Running units
+Units can be run with the test runner, as follows:
+```
+python runner.py [--format=table] module.TestClass module1.TestClass1 ...
+```
+The `--format` argument is optional and specifies the method of formatting the output. Available methods are `table` and `csv`, with `table` being the default.
+
+NOTE: The separator for the CSV output can not be specified at the moment. It is always ','.
+#### Output as Table
+Output as a table can look like this for example:
 ```
 [TestCase]
-Id  |    Name     | Status |   Time   |   Assert    | Message
-0   | testExample |  FAIL  | 0.000027 | assertEqual | True != False
+Id  |           Name            | Status |   Time   |     Assert     | Message
+0   | testAssertEqual           |   OK   | 0.000003 |                |
+1   | testAssertEqualFail       |   OK   | 0.000008 |                |
+2   | testAssertEqualFailFail   |  FAIL  | 0.000002 | None           | The method was expected to fail.
+3   | testAssertFalse           |   OK   | 0.000001 |                |
+4   | testAssertIn              |   OK   | 0.000002 |                |
+5   | testAssertIs              |   OK   | 0.000001 |                |
+6   | testAssertIsNone          |   OK   | 0.000002 |                |
+7   | testAssertIsNot           |   OK   | 0.000001 |                |
+8   | testAssertIsNotNone       |   OK   | 0.000001 |                |
+9   | testAssertNotEqual        |   OK   | 0.000001 |                |
+10  | testAssertNotIn           |   OK   | 0.000002 |                |
+11  | testAssertRaises          |   OK   | 0.000005 |                |
+12  | testAssertTrue            |   OK   | 0.000002 |                |
+13  | testFailWithCustomMessage |  FAIL  | 0.000003 | assertEqual    | A custom message.
+14  | testWillFail              |  FAIL  | 0.000003 | assertEqual    | 1 != 2
+15  | testWillFailToo           |  FAIL  | 0.000003 | assertNotEqual | 1 == 1
+```
+
+### Output as CSV
+Output as CSV can look like this for example:
+```
+TestCase
+0,testAssertEqual,OK,0.000004
+1,testAssertEqualFail,OK,0.000011
+2,testAssertEqualFailFail,FAIL,0.000004,None,The method was expected to fail.
+3,testAssertFalse,OK,0.000002
+4,testAssertIn,OK,0.000004
+5,testAssertIs,OK,0.000004
+6,testAssertIsNone,OK,0.000002
+7,testAssertIsNot,OK,0.000004
+8,testAssertIsNotNone,OK,0.000002
+9,testAssertNotEqual,OK,0.000003
+10,testAssertNotIn,OK,0.000002
+11,testAssertRaises,OK,0.000007
+12,testAssertTrue,OK,0.000003
+13,testFailWithCustomMessage,FAIL,0.000006,assertEqual,A custom message.
+14,testWillFail,FAIL,0.000007,assertEqual,1 != 2
+15,testWillFailToo,FAIL,0.000006,assertNotEqual,1 == 1
 ```
