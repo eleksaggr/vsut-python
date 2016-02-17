@@ -122,8 +122,11 @@ class TableFormatter(Formatter):
         # Get the maximum length of the name attribute.
         nameLength = max([len(name) for name in self.unit.tests.values()])
         # Get the maximum length of the assertion attribute.
-        assertLength = max([len(result.assertion)
-                            for result in self.unit.results.values() if result is not None])
+        if len([result for result in self.unit.results.values() if result is not None]) != 0:
+            assertLength = max([len(result.assertion)
+                                for result in self.unit.results.values() if result is not None])
+        else:
+            assertLength = 6
 
         # Add the name of the unit.
         ret = "[{0}]\n".format(type(self.unit).__name__)
@@ -147,9 +150,10 @@ class CSVFormatter(Formatter):
 
         Its separator can be specified when formatting, the default value is ','.
     """
+
     def __init__(self, unit, separator=","):
-        self.unit = unit;
-        self.separator = separator;
+        self.unit = unit
+        self.separator = separator
 
     def format(self):
         """Formats the results of a unit.
