@@ -37,10 +37,10 @@ assertEqual(True, False, message="True is not False")
 ```
 
 ## Expected Failures
-A test can be annotated with the `expectedFailure` decorator, as follows:
+A test can be annotated with the `expectFailure` decorator, as follows:
 ```python
 ...
-    @Unit.expectedFailure
+    @Unit.expectFailure
     def testThatWillFail(self):
         ...
 ...
