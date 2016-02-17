@@ -69,8 +69,9 @@ Units can be run with the test runner, as follows:
 python runner.py [--format=table] module.TestClass module1.TestClass1 ...
 ```
 The `--format` argument is optional and specifies the method of formatting the output. Available methods are `table` and `csv`, with `table` being the default.
+The separator for the csv-data can be specified with the parameter `--separator`.
 
-NOTE: The separator for the CSV output can not be specified at the moment. It is always ','.
+**NOTE**: Some characters require escaping with `\`, as they are special characters.
 #### Output as Table
 Output as a table can look like this for example:
 ```
