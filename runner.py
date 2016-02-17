@@ -39,3 +39,4 @@ if __name__ == "__main__":
             print(formatter)
         except (ImportError, AttributeError) as e:
             print("[Error] Could not import unit: {0}".format(unit))
+            print(e)
