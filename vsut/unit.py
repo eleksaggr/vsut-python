@@ -145,14 +145,14 @@ class TableFormatter(Formatter):
 class CSVFormatter(Formatter):
     """A CSVFormatter formats the result of a unit as a comma-separated-values list.
 
-        It's separator can be specified when formatting, the default value is ','.
+        Its separator can be specified when formatting, the default value is ','.
     """
+    def __init__(self, unit, separator=","):
+        self.unit = unit;
+        self.separator = separator;
 
-    def format(self, separator=","):
+    def format(self):
         """Formats the results of a unit.
-
-            Args:
-                separator (str): A character to insert between values.
         """
         ret = "{0}\n".format(type(self.unit).__name__)
 
@@ -160,8 +160,8 @@ class CSVFormatter(Formatter):
             result = self.unit.results[id]
             if result is None:
                 ret += "{1}{0}{2}{0}OK{0}{3}\n".format(
-                    separator, id, name, self.unit.times[id])
+                    self.separator, id, name, self.unit.times[id])
             else:
                 ret += "{1}{0}{2}{0}FAIL{0}{3}{0}{4}{0}{5}\n".format(
-                    separator, id, name, self.unit.times[id], result.assertion, result.message)
+                    self.separator, id, name, self.unit.times[id], result.assertion, result.message)
         return ret

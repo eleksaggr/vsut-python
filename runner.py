@@ -3,10 +3,12 @@ import sys
 from vsut.unit import CSVFormatter, TableFormatter, Unit
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Runs unit tests.")
+    parser = argparse.ArgumentParser(description="Runs unit tests and outputs them to the terminal.")
     parser.add_argument('units', metavar='Unit', type=str, nargs='+')
     parser.add_argument(
-        '--format', help="Default: table; Decides whether to use table or csv for output.", required=False)
+        '--format', help="Whether the output shall be formatted as a table or as csv-data. (Default: table)", required=False)
+    parser.add_argument('--separator', help="If the output format is csv, the separator character can be specified by this."
+        " (NOTE: Certain characters are special characters in UNIX terminals and must be prefaced by \)", required=False)
     args = vars(parser.parse_args())
 
     for unit in args["units"]:
@@ -27,7 +29,11 @@ if __name__ == "__main__":
 
             # Format the results and output them.
             if args["format"] == "csv":
-                formatter = CSVFormatter(unit)
+                print(args["separator"])
+                if args["separator"] is not None and args["separator"] != "":
+                    formatter = CSVFormatter(unit, args["separator"])
+                else:
+                    formatter = CSVFormatter(unit)
             else:
                 formatter = TableFormatter(unit)
             print(formatter)
