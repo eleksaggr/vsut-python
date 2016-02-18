@@ -67,20 +67,19 @@ Output as a table can look like this for example:
 Id  |           Name            | Status |   Time   |     Assert     | Message
 0   | testAssertEqual           |   OK   | 0.000003 |                |
 1   | testAssertEqualFail       |   OK   | 0.000008 |                |
-2   | testAssertEqualFailFail   |  FAIL  | 0.000002 | None           | The method was expected to fail.
-3   | testAssertFalse           |   OK   | 0.000001 |                |
-4   | testAssertIn              |   OK   | 0.000002 |                |
-5   | testAssertIs              |   OK   | 0.000001 |                |
-6   | testAssertIsNone          |   OK   | 0.000002 |                |
-7   | testAssertIsNot           |   OK   | 0.000001 |                |
-8   | testAssertIsNotNone       |   OK   | 0.000001 |                |
-9   | testAssertNotEqual        |   OK   | 0.000001 |                |
-10  | testAssertNotIn           |   OK   | 0.000002 |                |
-11  | testAssertRaises          |   OK   | 0.000005 |                |
-12  | testAssertTrue            |   OK   | 0.000002 |                |
-13  | testFailWithCustomMessage |  FAIL  | 0.000003 | assertEqual    | A custom message.
-14  | testWillFail              |  FAIL  | 0.000003 | assertEqual    | 1 != 2
-15  | testWillFailToo           |  FAIL  | 0.000003 | assertNotEqual | 1 == 1
+2   | testAssertFalse           |   OK   | 0.000001 |                |
+3   | testAssertIn              |   OK   | 0.000002 |                |
+4   | testAssertIs              |   OK   | 0.000001 |                |
+5   | testAssertIsNone          |   OK   | 0.000002 |                |
+6   | testAssertIsNot           |   OK   | 0.000001 |                |
+7   | testAssertIsNotNone       |   OK   | 0.000001 |                |
+8   | testAssertNotEqual        |   OK   | 0.000001 |                |
+9  | testAssertNotIn           |   OK   | 0.000002 |                |
+10  | testAssertRaises          |   OK   | 0.000005 |                |
+11  | testAssertTrue            |   OK   | 0.000002 |                |
+12  | testFailWithCustomMessage |  FAIL  | 0.000003 | assertEqual    | A custom message.
+13  | testWillFail              |  FAIL  | 0.000003 | assertEqual    | 1 != 2
+14  | testWillFailToo           |  FAIL  | 0.000003 | assertNotEqual | 1 == 1
 ```
 
 #### Output as CSV
@@ -89,18 +88,17 @@ Output as CSV can look like this for example:
 TestCase
 0,testAssertEqual,OK,0.000004
 1,testAssertEqualFail,OK,0.000011
-2,testAssertEqualFailFail,FAIL,0.000004,None,The method was expected to fail.
-3,testAssertFalse,OK,0.000002
-4,testAssertIn,OK,0.000004
-5,testAssertIs,OK,0.000004
-6,testAssertIsNone,OK,0.000002
-7,testAssertIsNot,OK,0.000004
-8,testAssertIsNotNone,OK,0.000002
-9,testAssertNotEqual,OK,0.000003
-10,testAssertNotIn,OK,0.000002
-11,testAssertRaises,OK,0.000007
-12,testAssertTrue,OK,0.000003
-13,testFailWithCustomMessage,FAIL,0.000006,assertEqual,A custom message.
-14,testWillFail,FAIL,0.000007,assertEqual,1 != 2
-15,testWillFailToo,FAIL,0.000006,assertNotEqual,1 == 1
+2,testAssertFalse,OK,0.000002
+3,testAssertIn,OK,0.000004
+4,testAssertIs,OK,0.000004
+5,testAssertIsNone,OK,0.000002
+6,testAssertIsNot,OK,0.000004
+7,testAssertIsNotNone,OK,0.000002
+8,testAssertNotEqual,OK,0.000003
+9,testAssertNotIn,OK,0.000002
+10,testAssertRaises,OK,0.000007
+11,testAssertTrue,OK,0.000003
+12,testFailWithCustomMessage,FAIL,0.000006,assertEqual,A custom message.
+13,testWillFail,FAIL,0.000007,assertEqual,1 != 2
+14,testWillFailToo,FAIL,0.000006,assertNotEqual,1 == 1
 ```
