@@ -16,7 +16,6 @@ class Unit():
 
         Attributes:
             tests ({int: str}): A map that maps function names to an unique id.
-            expectedFails ([str]): A list of name of tests, that are expected to fail.
             times ({int: str}): A map that maps a functions execution time as a string to its id.
             results ({int: AssertResult}): A map that maps a tests result to its id. If a test is successful its entry is None.
     """
@@ -24,7 +23,6 @@ class Unit():
     def __init__(self):
         self.tests = {id: funcName for id, funcName in enumerate([method for method in dir(self)
                                                                   if callable(getattr(self, method)) and method.startswith("test")])}
-        self.expectedFails = []
         self.times = {}
         self.results = {}
 
@@ -32,7 +30,6 @@ class Unit():
         """Runs all tests in this unit.
 
             Times the execution of all tests and records them.
-            Also checks whether tests that are expected to fail did so.
         """
         for id, name in self.tests.items():
             # Start timing the tests.
@@ -56,16 +53,6 @@ class Unit():
             # Add the execution time of the test to the times map.
             elapsed = clock() - start
             self.times[id] = "{0:.6f}".format(elapsed)
-
-        # Check if all tests we expected to fail really did so.
-        # Should this not be the case invert their result.
-        for id, name in self.tests.items():
-            if name in self.expectedFails:
-                if self.results[id] is None:
-                    self.results[id] = AssertResult(
-                        "None", "The method was expected to fail.")
-                else:
-                    self.results[id] = None
 
     def setup(self):
         """Setup is executed before every test.
