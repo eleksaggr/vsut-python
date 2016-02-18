@@ -36,18 +36,6 @@ assertEqual(True, False, message="True is not False")
 ...
 ```
 
-## Expected Failures
-A test can be annotated with the `expectFailure` decorator, as follows:
-```python
-...
-    @Unit.expectFailure
-    def testThatWillFail(self):
-        ...
-...
-```
-Upon execution the unit will check, if the test really failed.
-Should this not be the case the test will be listed as a failure.
-
 ## Full Example
 ```python
 from vsut.unit import Unit

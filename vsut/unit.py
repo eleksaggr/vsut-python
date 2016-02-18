@@ -67,19 +67,6 @@ class Unit():
                 else:
                     self.results[id] = None
 
-    def expectFailure(func):
-        """Annotates a test as a failure.
-
-            If a test annotated as a failure succeeds, it will be recorded as a failure.
-            If it fails it will be recorded as a success.
-        """
-
-        def wrapper(self):
-            if func.__name__ not in self.expectedFails:
-                self.expectedFails.append(func.__name__)
-            func(self)
-        return wrapper
-
     def setup(self):
         """Setup is executed before every test.
         """

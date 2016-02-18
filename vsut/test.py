@@ -15,36 +15,32 @@ class AssertTest(Unit):
         assertEqual(True, True)
         assertEqual("abc", "abc")
 
-    @Unit.expectFailure
     def testAssertEqualFail(self):
-        assertEqual(False, True)
+        assertRaises(AssertResult, assertEqual, False, True)
 
     def testAssertNotEqual(self):
         assertNotEqual(1, 2)
         assertNotEqual(True, False)
         assertNotEqual("abc", "cba")
 
-    @Unit.expectFailure
     def testAssertNotEqualFail(self):
-        assertNotEqual(1, 1)
+        assertRaises(AssertResult, assertNotEqual, True, True)
 
     def testAssertTrue(self):
         assertTrue(True)
         assertTrue(1 == 1)
         assertTrue("abc" == "abc")
 
-    @Unit.expectFailure
     def testAssertTrueFail(self):
-        assertTrue(False)
+        assertRaises(AssertResult, assertTrue, False)
 
     def testAssertFalse(self):
         assertFalse(False)
         assertFalse(1 != 1)
         assertFalse("abc" != "abc")
 
-    @Unit.expectFailure
     def testAssertFalse(self):
-        assertFalse(True)
+        assertRaises(AssertResult, assertFalse, True)
 
     def testAssertIs(self):
         a = b = 1
@@ -52,55 +48,46 @@ class AssertTest(Unit):
         assertIs(1, 1)
         assertIs(a, b)
 
-    @Unit.expectFailure
     def testAssertIsFail(self):
-        assertIs(1, None)
+        assertRaises(AssertResult, assertIs, 1, None)
 
     def testAssertIsNot(self):
         assertIsNot(1, 2)
         assertIsNot(1, None)
 
-    @Unit.expectFailure
     def testAssertIsNotFail(self):
-        assertIsNot(None, None)
+        assertRaises(AssertResult, assertIsNot, True, True)
 
     def testAssertIsNone(self):
         assertIsNone(None)
 
-    @Unit.expectFailure
     def testAssertIsNoneFail(self):
-        assertIsNone(1)
+        assertRaises(AssertResult, assertIsNone, True)
 
     def testAssertIsNotNone(self):
         assertIsNotNone(1)
         assertIsNotNone(True)
         assertIsNotNone("abc")
 
-    @Unit.expectFailure
     def testAssertIsNotNoneFail(self):
-        assertIsNotNone(None)
+        assertRaises(AssertResult, assertIsNotNone, None)
 
     def testAssertIn(self):
         assertIn(1, [1, 2, 3])
-        assertIn("abc", {1: "abc", 2: "bcd"})
 
-    @Unit.expectFailure
-    def testAssertIn(self):
-        assertIn(2, [1, 3, 4])
+    def testAssertInFail(self):
+        assertRaises(AssertResult, assertIn, 1, [2, 3])
 
     def testAssertNotIn(self):
         assertNotIn(1, [2, 3, 4])
-        assertNotIn("abc", {1: "bcd"})
 
-    @Unit.expectFailure
     def testAssertNotInFail(self):
-        assertNotIn(1, [1, 2, 3])
+        assertRaises(AssertResult, assertNotIn, 1, [1, 2])
 
     def testAssertRaises(self):
         div = lambda a, b: a / b
         assertRaises(ZeroDivisionError, div, 2, 0)
 
-    @Unit.expectFailure
     def testAssertRaisesFail(self):
         div = lambda a, b: a / b
-        assertRaises(ZeroDivisionError, div, 2, 1)
+        assertRaises(AssertResult, assertRaises, ZeroDivisionError, div, 2, 1)
