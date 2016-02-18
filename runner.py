@@ -29,7 +29,6 @@ if __name__ == "__main__":
 
             # Format the results and output them.
             if args["format"] == "csv":
-                print(args["separator"])
                 if args["separator"] is not None and args["separator"] != "":
                     formatter = CSVFormatter(unit, args["separator"])
                 else:
