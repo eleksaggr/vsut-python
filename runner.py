@@ -2,7 +2,7 @@ import argparse
 import sys
 from vsut.unit import CSVFormatter, TableFormatter, Unit
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Runs unit tests and outputs them to the terminal.")
     parser.add_argument('units', metavar='Unit', type=str, nargs='+')
     parser.add_argument(
@@ -39,3 +39,6 @@ if __name__ == "__main__":
         except (ImportError, AttributeError) as e:
             print("[Error] Could not import unit: {0}".format(unit))
             print(e)
+
+if __name__ == "__main__":
+    main()

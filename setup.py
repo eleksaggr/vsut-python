@@ -6,7 +6,7 @@ def read(file):
 
 setup(
     name="vsut",
-    version="1.5.2",
+    version="1.5.3",
     author="Alex Egger",
     author_email="alex.egger96@gmail.com",
     description="A simple unit testing framework for Python 3.",
