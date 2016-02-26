@@ -74,7 +74,7 @@ Id  |           Name            | Status |   Time   |     Assert     | Message
 6   | testAssertIsNot           |   OK   | 0.000001 |                |
 7   | testAssertIsNotNone       |   OK   | 0.000001 |                |
 8   | testAssertNotEqual        |   OK   | 0.000001 |                |
-9  | testAssertNotIn           |   OK   | 0.000002 |                |
+9   | testAssertNotIn           |   OK   | 0.000002 |                |
 10  | testAssertRaises          |   OK   | 0.000005 |                |
 11  | testAssertTrue            |   OK   | 0.000002 |                |
 12  | testFailWithCustomMessage |  FAIL  | 0.000003 | assertEqual    | A custom message.
