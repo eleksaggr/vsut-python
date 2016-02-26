@@ -1,8 +1,11 @@
 import argparse
+import os
 import sys
 from vsut.unit import CSVFormatter, TableFormatter, Unit
 
 def main():
+    sys.path.append(os.getcwd())
+
     parser = argparse.ArgumentParser(description="Runs unit tests and outputs them to the terminal.")
     parser.add_argument('units', metavar='Unit', type=str, nargs='+')
     parser.add_argument(
