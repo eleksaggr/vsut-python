@@ -1,5 +1,11 @@
 # **V**ery **S**imple **U**nit **T**est
-**VSUT** is a simple unit test framework for Python.
+**VSUT** is a simple unit test framework for Python 3.
+
+## Installation
+**VSUT** can be installed using `pip`:
+```
+pip install vsut
+```
 
 ## Usage
 A unit can be described , like follows:
@@ -54,7 +60,7 @@ class TestCase(Unit):
 ## Running units
 Units can be run with the test runner, as follows:
 ```
-python runner.py [--format=table] module.TestClass module1.TestClass1 ...
+vrun [--format=table] module.TestClass module1.TestClass1 ...
 ```
 The `--format` argument is optional and specifies the method of formatting the output. Available methods are `table` and `csv`, with `table` being the default.
 The separator for the csv-data can be specified with the parameter `--separator`.
