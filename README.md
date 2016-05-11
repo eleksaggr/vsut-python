@@ -8,7 +8,7 @@ pip install vsut
 ```
 
 ## Usage
-A unit can be described , like follows:
+A unit can be described ,as follows:
 ```python
 ...
 class UnitTest(vsut.unit.Unit):
@@ -34,8 +34,7 @@ The following methods can be used in a test-case to check for success or failure
 * ```assertIsNotNone(expected)``` - Checks whether the argument is not None.
 * ```assertRaises(exception, func, *args)``` - Checks whether the function 'func' raises an exception of the type 'exception'.
 
-For any of these methods a **message** parameter can be specified, that will be printed instead of the default message.
-#### Example
+For any of these methods an optional **message** parameter can be specified, that will be printed instead of the default message. This is visibile in the following example:
 ```python
 ...
 assertEqual(True, False, message="True is not False")
@@ -60,8 +59,14 @@ class TestCase(Unit):
 ## Running units
 Units can be run with the test runner, as follows:
 ```
-vrun [--format=table] module.TestClass module1.TestClass1 ...
+vrun [--format=table] test/test.py test/test1.py
 ```
+Alternatively a whole directory can be specified:
+```
+vrun [--format=table] test/
+```
+Every Unit defined in a file in the `test` directory will be run by this command.
+
 The `--format` argument is optional and specifies the method of formatting the output. Available methods are `table` and `csv`, with `table` being the default.
 The separator for the csv-data can be specified with the parameter `--separator`.
 
