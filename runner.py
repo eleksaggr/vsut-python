@@ -1,7 +1,9 @@
 import argparse
 import os, os.path
 import sys
-from vsut.unit import CSVFormatter, TableFormatter, Unit
+
+from vsut.format import CSVFormatter, TableFormatter
+from vsut.unit import Unit
 
 
 def main():
