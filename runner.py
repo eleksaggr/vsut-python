@@ -9,7 +9,7 @@ def main():
 
     parser = argparse.ArgumentParser(
         description="Runs unit tests and outputs them to the terminal.")
-    parser.add_argument('units', metavar='Unit', type=str, nargs='+')
+    parser.add_argument('files', metavar='Files', type=str, nargs='+')
     parser.add_argument(
         '--format',
         help=
@@ -23,63 +23,75 @@ def main():
         required=False)
     args = vars(parser.parse_args())
 
-    returnValue = 0
-    for unit in args["units"]:
-        # Treat units as file names or directory names.
-        if unit.endswith("/"):
-            # Unit is a directory.
+    returnValue = False
+    for path in args["files"]:
+        if path.endswith("/"):
+            # Path is a directory.
             files = [f[0:-3]
-                     for f in os.listdir(unit)
-                     if os.path.isfile(os.path.join(unit, f))]
-
-            print(files)
-            for file in files:
-                module = unit[0:-1] + "." + file.replace("/", ".")
-                print(module)
-                __import__(module)
-            units = Unit.__subclasses__()
-            ret = runUnits(units, args)
-            if ret != 0:
-                returnValue = 1
+                     for f in os.listdir(path)
+                     if os.path.isfile(os.path.join(path, f))]
         else:
-            # Unit is a file.
-            module = unit.replace("/", ".")[0:-3]
-            units = loadUnits(module)
-            return runUnits(units, args)
+            # Path is a file.
+            files = [path[0:-3]]
 
-    return returnValue
+        modules = []
+        for file in files:
+            # Transform path to module name.
+            modules.append(path[0:-1] + "." + file.replace("/", "."))
+
+        classes = loadClasses(modules)
+
+        # Find out which formatter to use.
+        if args["format"] == "csv":
+            formatter = CSVFormatter
+        else:
+            formatter = TableFormatter
+
+        # Find out which separator to use for CSV.
+        if args["separator"] is not None and args["separator"] != "":
+            separator = args["separator"]
+        else:
+            separator = ";"
+
+        ret = runTests(classes, formatter, separator)
+        if ret:
+            returnValue = True
+
+    if returnValue:
+        sys.exit(1)
 
 
-def loadUnits(module):
+def loadClasses(modules):
     try:
-        # Import the module.
-        module = __import__(module)
+        for module in modules:
+            __import__(module)
 
         return Unit.__subclasses__()
     except (ImportError, AttributeError) as e:
-        print("[Error] Could not import unit: {0}".format(module))
+        print("[Error] Could not import module: {0}".format(module))
         print(e)
 
 
-def runUnits(units, args):
-    ret = 0
-    for unit in units:
-        unit = unit()
+def runTests(classes, formatterCls, separator):
+    failure = False
+    for cls in classes:
+        unit = cls()
         unit.run()
 
         if unit.failed:
-            ret = 1
+            failure = True
 
-        # Format the results and output them.
-        if args["format"] == "csv":
-            if args["separator"] is not None and args["separator"] != "":
-                formatter = CSVFormatter(unit, args["separator"])
-            else:
-                formatter = CSVFormatter(unit)
+        #NOTE: This looks weird. There should be a way to get the class as
+        # argument and instanciate it.
+        if formatterCls == CSVFormatter:
+            formatter = CSVFormatter(unit, separator)
         else:
             formatter = TableFormatter(unit)
+
+        formatter.format()
         print(formatter)
-    return ret
+
+    return failure
 
 
 if __name__ == "__main__":
