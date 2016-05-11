@@ -21,8 +21,12 @@ class Unit():
     """
 
     def __init__(self):
-        self.tests = {id: funcName for id, funcName in enumerate([method for method in dir(self)
-                                                                  if callable(getattr(self, method)) and method.startswith("test")])}
+        self.tests = {
+            id: funcName
+            for id, funcName in enumerate([method for method in dir(self)
+                                           if callable(getattr(self, method))
+                                           and method.startswith("test")])
+        }
         self.times = {}
         self.results = {}
 
@@ -96,9 +100,12 @@ class TableFormatter(Formatter):
         # Get the maximum length of the name attribute.
         nameLength = max([len(name) for name in self.unit.tests.values()])
         # Get the maximum length of the assertion attribute.
-        if len([result for result in self.unit.results.values() if result is not None]) != 0:
+        if len([result
+                for result in self.unit.results.values() if result is not None
+                ]) != 0:
             assertLength = max([len(result.assertion)
-                                for result in self.unit.results.values() if result is not None])
+                                for result in self.unit.results.values()
+                                if result is not None])
         else:
             assertLength = 6
 
@@ -106,16 +113,36 @@ class TableFormatter(Formatter):
         ret = "[{0}]\n".format(type(self.unit).__name__)
         # Add the table header.
         ret += "{0:^3} | {1:^{nameLength}} | {2:^6} | {3:^8} | {4:^{assertLength}} | {5}\n".format(
-            "Id", "Name", "Status", "Time", "Assert", "Message", nameLength=nameLength, assertLength=assertLength)
+            "Id",
+            "Name",
+            "Status",
+            "Time",
+            "Assert",
+            "Message",
+            nameLength=nameLength,
+            assertLength=assertLength)
 
         for id, name in self.unit.tests.items():
             result = self.unit.results[id]
             if result == None:
                 ret += "{0:<3} | {1:<{nameLength}} | {2:^6} | {3:<8} | {4:<{assertLength}} |\n".format(
-                    id, name, "OK", self.unit.times[id], "", nameLength=nameLength, assertLength=assertLength)
+                    id,
+                    name,
+                    "OK",
+                    self.unit.times[id],
+                    "",
+                    nameLength=nameLength,
+                    assertLength=assertLength)
             else:
                 ret += "{0:<3} | {1:<{nameLength}} | {2:^6} | {3:<8} | {4:<{assertLength}} | {5}\n".format(
-                    id, name, "FAIL", self.unit.times[id], result.assertion, result.message, nameLength=nameLength, assertLength=assertLength)
+                    id,
+                    name,
+                    "FAIL",
+                    self.unit.times[id],
+                    result.assertion,
+                    result.message,
+                    nameLength=nameLength,
+                    assertLength=assertLength)
         return ret
 
 
@@ -141,5 +168,6 @@ class CSVFormatter(Formatter):
                     self.separator, id, name, self.unit.times[id])
             else:
                 ret += "{1}{0}{2}{0}FAIL{0}{3}{0}{4}{0}{5}\n".format(
-                    self.separator, id, name, self.unit.times[id], result.assertion, result.message)
+                    self.separator, id, name, self.unit.times[id],
+                    result.assertion, result.message)
         return ret

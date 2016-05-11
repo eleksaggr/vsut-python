@@ -193,8 +193,8 @@ def assertRaises(exception, func, *args, message=""):
     try:
         func(*args)
         if message == "":
-            message = "{0} did not raise {1}".format(
-                func.__name__, exception.__name__)
+            message = "{0} did not raise {1}".format(func.__name__,
+                                                     exception.__name__)
         raise AssertResult(assertRaises.__name__, message)
     except exception as e:
         pass
