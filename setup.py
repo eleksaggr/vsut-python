@@ -6,10 +6,10 @@ def read(file):
 
 setup(
     name="vsut",
-    version="1.5.4",
+    version="1.5.5",
     author="Alex Egger",
     author_email="alex.egger96@gmail.com",
-    description="A simple unit testing framework for Python 3.",
+    description="A simple unit testing framework for Python 3.4",
     license="MIT",
     keywords="unit unittest test testing",
     url="http://github.com/zillolo/vsut-python",
@@ -171,5 +171,3 @@ Output as Table
         "Programming Language :: Python :: 3",
         "Topic :: Software Development :: Testing"]
 )
-
-#TODO: Find a way so people can execute runner.py when importing with pip.
