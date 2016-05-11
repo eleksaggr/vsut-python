@@ -5,7 +5,7 @@ from vsut.unit import CSVFormatter, TableFormatter, Unit
 
 
 def main():
-    sys.path.append(os.getcwd())
+    sys.path.insert(0, os.getcwd())
 
     parser = argparse.ArgumentParser(
         description="Runs unit tests and outputs them to the terminal.")
@@ -27,7 +27,7 @@ def main():
     for path in args["files"]:
         if path.endswith("/"):
             # Path is a directory.
-            files = [f[0:-3]
+            files = [path + f[0:-3]
                      for f in os.listdir(path)
                      if os.path.isfile(os.path.join(path, f))]
         else:
@@ -37,7 +37,7 @@ def main():
         modules = []
         for file in files:
             # Transform path to module name.
-            modules.append(path[0:-1] + "." + file.replace("/", "."))
+            modules.append(file.replace("/", "."))
 
         classes = loadClasses(modules)
 
