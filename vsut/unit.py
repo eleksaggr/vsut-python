@@ -29,6 +29,7 @@ class Unit():
         }
         self.times = {}
         self.results = {}
+        self.failed = False
 
     def run(self):
         """Runs all tests in this unit.
@@ -50,6 +51,7 @@ class Unit():
                 self.teardown()
             except AssertResult as e:
                 result = e
+                self.failed = True
             else:
                 result = None
             self.results[id] = result
