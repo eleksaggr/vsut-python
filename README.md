@@ -1,4 +1,4 @@
-# **V**ery **S**imple **U**nit **T**est
+# **V**ery **S**imple **U**nit **T**est [![Build Status](https://travis-ci.org/zillolo/vsut-python.svg?branch=master)](https://travis-ci.org/zillolo/vsut-python)
 **VSUT** is a simple unit test framework for Python 3.
 
 ## Installation
