@@ -45,17 +45,14 @@ def main():
 
         # Find out which formatter to use.
         if args["format"] == "csv":
-            formatter = CSVFormatter
-        else:
-            formatter = TableFormatter
-
-        # Find out which separator to use for CSV.
-        if args["separator"] is not None and args["separator"] != "":
-            separator = args["separator"]
-        else:
             separator = ";"
+            if args["separator"] is not None and args["separator"] != "":
+                separator = args["separator"]
+            formatter = CSVFormatter(separator)
+        else:
+            formatter = TableFormatter()
 
-        ret = runTests(classes, formatter, separator)
+        ret = runTests(classes, formatter)
         if ret:
             returnValue = True
 
@@ -74,7 +71,7 @@ def loadClasses(modules):
         print(e)
 
 
-def runTests(classes, formatterCls, separator):
+def runTests(classes, formatter):
     failure = False
     for cls in classes:
         unit = cls()
@@ -83,15 +80,7 @@ def runTests(classes, formatterCls, separator):
         if unit.failed:
             failure = True
 
-        #NOTE: This looks weird. There should be a way to get the class as
-        # argument and instanciate it.
-        if formatterCls == CSVFormatter:
-            formatter = CSVFormatter(unit, separator)
-        else:
-            formatter = TableFormatter(unit)
-
-        formatter.format()
-        print(formatter)
+        print(formatter.format(unit))
 
     return failure
 
