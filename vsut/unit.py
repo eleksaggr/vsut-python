@@ -30,6 +30,7 @@ class Unit():
         self.times = {}
         self.results = {}
         self.failed = False
+        self.ignoreUnit = False
 
     def run(self):
         """Runs all tests in this unit.

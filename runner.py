@@ -71,16 +71,18 @@ def loadClasses(modules):
         print(e)
 
 
-def runTests(classes, formatter):
+def runTests(classes, formatter=None, strict=False):
     failure = False
     for cls in classes:
         unit = cls()
-        unit.run()
+        if not unit.ignoreUnit or strict:
+            unit.run()
 
-        if unit.failed:
-            failure = True
+            if unit.failed:
+                failure = True
 
-        print(formatter.format(unit))
+            if formatter is not None:
+                print(formatter.format(unit))
 
     return failure
 
