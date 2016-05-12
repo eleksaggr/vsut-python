@@ -76,7 +76,6 @@ class TableFormatter(Formatter):
                     assertLength=assertLength)
         return ret
 
-
 class CSVFormatter(Formatter):
     """A CSVFormatter formats the result of a unit as a comma-separated-values list.
 
