@@ -26,20 +26,14 @@ def main():
     args = vars(parser.parse_args())
 
     returnValue = False
+
     for path in args["files"]:
-        if path.endswith("/"):
-            # Path is a directory.
-            files = [path + f[0:-3]
-                     for f in os.listdir(path)
-                     if os.path.isfile(os.path.join(path, f))]
-        else:
-            # Path is a file.
-            files = [path[0:-3]]
+        files = findFiles(path)
 
         modules = []
         for file in files:
             # Transform path to module name.
-            modules.append(file.replace("/", "."))
+            modules.append(file.replace("/", ".")[0:-3])
 
         classes = loadClasses(modules)
 
@@ -59,6 +53,17 @@ def main():
     if returnValue:
         sys.exit(1)
 
+def findFiles(path):
+    files = []
+    if os.path.isdir(path):
+        for file in os.listdir(path):
+            if not path.endswith("/"):
+                path = path + "/"
+            files.extend(findFiles(path + file))
+    else:
+        if path.endswith(".py"):
+            files.append(path) # Return file name
+    return files
 
 def loadClasses(modules):
     try:
