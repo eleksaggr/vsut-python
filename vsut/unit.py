@@ -18,6 +18,8 @@ class Unit():
             tests ({int: str}): A map that maps function names to an unique id.
             times ({int: str}): A map that maps a functions execution time as a string to its id.
             results ({int: AssertResult}): A map that maps a tests result to its id. If a test is successful its entry is None.
+            failed (boolean): Whether the unit as a whole failed.
+            ignoreUnit (boolean): Tells the runner to ignore the Unit, if he so chooses.
     """
 
     def __init__(self):
