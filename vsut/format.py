@@ -1,3 +1,5 @@
+from math import log10
+
 from vsut.unit import Unit
 
 
@@ -23,6 +25,10 @@ class TableFormatter(Formatter):
 
     def format(self, unit):
 
+        # Get the maximum length of the id attribute or set it to 2, if less than 2.
+        idLength = int(log10(len(unit.tests))) + 1
+        if idLength < 2:
+            idLength = 2
         # Get the maximum length of the name attribute.
         nameLength = max([len(name) for name in unit.tests.values()])
         # Get the maximum length of the assertion attribute.
@@ -37,35 +43,38 @@ class TableFormatter(Formatter):
         # Add the name of the unit.
         ret = "[{0}]\n".format(type(unit).__name__)
         # Add the table header.
-        ret += "{0:^3} | {1:^{nameLength}} | {2:^6} | {3:^8} | {4:^{assertLength}} | {5}\n".format(
+        ret += "{0:^{idLength}} | {1:^{nameLength}} | {2:^6} | {3:^8} | {4:^{assertLength}} | {5}\n".format(
             "Id",
             "Name",
             "Status",
             "Time",
             "Assert",
             "Message",
+            idLength=idLength,
             nameLength=nameLength,
             assertLength=assertLength)
 
         for id, name in unit.tests.items():
             result = unit.results[id]
             if result == None:
-                ret += "{0:<3} | {1:<{nameLength}} | {2:^6} | {3:<8} | {4:<{assertLength}} |\n".format(
+                ret += "{0:<{idLength}} | {1:<{nameLength}} | {2:^6} | {3:<8} | {4:<{assertLength}} |\n".format(
                     id,
                     name,
                     "OK",
                     unit.times[id],
                     "",
+                    idLength=idLength,
                     nameLength=nameLength,
                     assertLength=assertLength)
             else:
-                ret += "{0:<3} | {1:<{nameLength}} | {2:^6} | {3:<8} | {4:<{assertLength}} | {5}\n".format(
+                ret += "{0:<{idLength}} | {1:<{nameLength}} | {2:^6} | {3:<8} | {4:<{assertLength}} | {5}\n".format(
                     id,
                     name,
                     "FAIL",
                     unit.times[id],
                     result.assertion,
                     result.message,
+                    idLength=idLength,
                     nameLength=nameLength,
                     assertLength=assertLength)
         return ret
