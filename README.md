@@ -38,7 +38,8 @@ Checks for equality of `expected` and `actual`.
 ```python
 assertEqual(expected, actual, message="")
 ```
-### assertNotEqual
+
+#### assertNotEqual
 Checks for inequality of `expected` and `actual`.
 * `expected` - The expected value to check against.
 * `actual` - The actual value to be checked.
@@ -46,21 +47,24 @@ Checks for inequality of `expected` and `actual`.
 ```python
 assertNotEqual(expected, actual, message="")
 ```
-### assertTrue
+
+#### assertTrue
 Checks whether `actual` is `True`.
 * `actual` - The actual value to be checked.
 * `message` - A message to be printed in case the check fails.
 ```python
 assertTrue(actual, message="")
 ```
-### assertFalse
+
+#### assertFalse
 Checks whether `actual` is `False`.
 * `actual` - The actual value to be checked.
 * `message` - A message to be printed in case the check fails.
 ```python
 assertFalse(actual, message="")
 ```
-### assertIn
+
+#### assertIn
 Checks whether `expected` is in the collection `collection`.
 * `collection` - The collection to search in.
 * `actual` - The value to be searched.
@@ -68,7 +72,8 @@ Checks whether `expected` is in the collection `collection`.
 ```python
 assertIn(expected, collection, message="")
 ```
-### assertNotIn
+
+#### assertNotIn
 Checks whether `expected` is not in the collection `collection`.
 * `collection` - The collection to search in.
 * `actual` - The value to be searched.
@@ -76,6 +81,7 @@ Checks whether `expected` is not in the collection `collection`.
 ```python
 assertNotIn(expected, collection, message="")
 ```
+
 #### assertIs
 Checks whether `actual` is `expected`.
 * `expected` - The expected value to check against.
@@ -84,6 +90,7 @@ Checks whether `actual` is `expected`.
 ```python
 assertIs(expected, actual, message="")
 ```
+
 #### assertIsNot
 Checks whether `actual` is not `expected`.
 * `expected` - The expected value to check against.
@@ -92,21 +99,24 @@ Checks whether `actual` is not `expected`.
 ```python
 assertIsNot(expected, actual, message="")
 ```
-### assertIsNone
+
+#### assertIsNone
 Checks whether `actual` is `None`.
 * `actual` - The actual value to be checked.
 * `message` - A message to be printed in case the check fails.
 ```python
 assertIsNone(actual, message="")
 ```
-### assertIsNotNone
+
+#### assertIsNotNone
 Checks whether `actual` is not `None`.
 * `actual` - The actual value to be checked.
 * `message` - A message to be printed in case the check fails.
 ```python
 assertIsNotNone(actual, message="")
 ```
-### assertRaises
+
+#### assertRaises
 Checks whether `func` raises an object of class `expection`, when called with the parameters specified in `args`.
 * `expection` - A class of an exception, that should be raised.
 * `func` - The function to be called.
